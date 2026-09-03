@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}Student Dashboard - SkillMatch{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <h4>My Applications</h4>
+        {% if applications %}
+            <div class="row">
+                {% for app in applications %}
+                <div class="col-md-6 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6>{{ app.internship.title }}</h6>
+                            <p class="text-muted small mb-1">{{ app.internship.company.organization_name }}</p>
+                            <span class="badge bg-{% if app.status == 'pending' %}warning{% elif app.status == 'accepted' %}success{% elif app.status == 'rejected' %}danger{% else %}info{% endif %}">
+                                {{ app.status|title }}
+                            </span>
+                            <span class="badge bg-secondary ms-2">Match: {{ app.match_score }}%</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="card p-4 text-center text-muted">
+                No applications yet. <a href="{% url 'students:browse_internships' %}">Browse internships</a>
+            </div>
+        {% endif %}
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <h6>Quick Links</h6>
+                <a href="{% url 'students:browse_internships' %}" class="btn btn-outline-primary w-100 mb-2">Browse Internships</a>
+                <a href="{% url 'students:profile' %}" class="btn btn-outline-secondary w-100">My Profile</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center align-items-center min-vh-75">
+    <div class="col-md-8 text-center">
+        <h1 class="display-4 fw-bold mb-3" style="color: var(--primary);">SkillMatch</h1>
+        <p class="lead text-muted mb-4">A Multi-Institutional, Skill-Based Internship Placement Platform for Nepali Colleges</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{% url 'accounts:login' %}" class="btn btn-primary btn-lg px-4">Login</a>
+            <a href="{% url 'accounts:register' %}" class="btn btn-outline-primary btn-lg px-4">Register</a>
+        </div>
+        <div class="mt-5 row text-center">
+            <div class="col-md-4">
+                <div class="card p-3">
+                    <h5>Verified Students</h5>
+                    <p class="text-muted small">Only registered college students can apply</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-3">
+                    <h5>Skill Matching</h5>
+                    <p class="text-muted small">Jaccard algorithm ranks internships by skill fit</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card p-3">
+                    <h5>Admin Analytics</h5>
+                    <p class="text-muted small">Track placement rates and skill demand</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

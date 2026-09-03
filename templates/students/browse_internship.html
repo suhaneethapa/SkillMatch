@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Browse Internships - SkillMatch{% endblock %}
+
+{% block content %}
+<h4 class="mb-4">Available Internships <span class="text-muted small">(Ranked by Match Score)</span></h4>
+
+<div class="row">
+    {% for item in listings %}
+    <div class="col-md-6 col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-2">
+                    <h6 class="card-title mb-0">{{ item.internship.title }}</h6>
+                    <span class="match-badge badge {% if item.score >= 70 %}match-high{% elif item.score >= 50 %}match-mid{% else %}match-low{% endif %} rounded-pill">
+                        {{ item.score }}%
+                    </span>
+                </div>
+                <p class="text-muted small mb-2">{{ item.internship.company.organization_name }}</p>
+                <p class="small mb-2">{{ item.internship.description|truncatewords:15 }}</p>
+                
+                {% if item.gap %}
+                    <p class="small text-danger mb-2"><strong>Missing:</strong> {{ item.gap|join:", " }}</p>
+                {% endif %}
+                
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <span class="badge bg-light text-dark">{{ item.internship.location_type|title }}</span>
+                    {% if item.eligible %}
+                        <a href="{% url 'students:apply_internship' item.internship.id %}" class="btn btn-primary btn-sm">Apply</a>
+                    {% else %}
+                        <span class="badge bg-secondary">Not Eligible (Need 50%)</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% empty %}
+    <div class="col-12">
+        <div class="card p-4 text-center text-muted">No internships available.</div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

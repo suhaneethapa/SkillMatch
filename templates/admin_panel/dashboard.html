@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard - SkillMatch{% endblock %}
+
+{% block content %}
+<h4 class="mb-4">Admin Analytics Dashboard</h4>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="stat-number">{{ total_students }}</div>
+            <div class="text-muted small">Students</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="stat-number">{{ total_companies }}</div>
+            <div class="text-muted small">Companies</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="stat-number">{{ total_listings }}</div>
+            <div class="text-muted small">Listings</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card stat-card">
+            <div class="stat-number">{{ placement_rate }}%</div>
+            <div class="text-muted small">Placement Rate</div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h6>Monthly Application Volume</h6>
+                <canvas id="volumeChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h6>Top Required Skills</h6>
+                <canvas id="skillsChart" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h6>Application Status Breakdown</h6>
+                <canvas id="statusChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-body">
+                <h6>Quick Actions</h6>
+                <a href="{% url 'admin:index' %}" class="btn btn-outline-primary w-100 mb-2">Django Admin</a>
+                <a href="#" class="btn btn-outline-secondary w-100 mb-2">Export Students CSV</a>
+                <a href="#" class="btn btn-outline-secondary w-100 mb-2">Export Companies CSV</a>
+                <a href="#" class="btn btn-outline-secondary w-100">Export Applications CSV</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const months = {{ months|safe }};
+const volumeData = {{ application_volume|safe }};
+const skillLabels = {{ top_skills|safe }};
+const skillData = {{ skill_counts|safe }};
+const statusLabels = {{ status_labels|safe }};
+const statusData = {{ status_data|safe }};
+
+new Chart(document.getElementById('volumeChart'), {
+    type: 'line',
+    data: {
+        labels: months,
+        datasets: [{
+            label: 'Applications',
+            data: volumeData,
+            borderColor: '#4f46e5',
+            backgroundColor: 'rgba(79, 70, 229, 0.1)',
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } } }
+});
+
+new Chart(document.getElementById('skillsChart'), {
+    type: 'bar',
+    data: {
+        labels: skillLabels,
+        datasets: [{
+            label: 'Demand',
+            data: skillData,
+            backgroundColor: '#7c3aed'
+        }]
+    },
+    options: { responsive: true, plugins: { legend: { display: false } } }
+});
+
+new Chart(document.getElementById('statusChart'), {
+    type: 'doughnut',
+    data: {
+        labels: statusLabels,
+        datasets: [{
+            data: statusData,
+            backgroundColor: ['#fbbf24', '#3b82f6', '#22c55e', '#ef4444', '#6b7280']
+        }]
+    },
+    options: { responsive: true }
+});
+</script>
+{% endblock %}

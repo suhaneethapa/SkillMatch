@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}Applicants - {{ internship.title }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h4 class="mb-4">Applicants for: {{ internship.title }}</h4>
+        
+        {% if applications %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Student</th>
+                            <th>Match Score</th>
+                            <th>Status</th>
+                            <th>Applied</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for app in applications %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ app.student.email }}</td>
+                            <td>
+                                <span class="badge {% if app.match_score >= 70 %}match-high{% elif app.match_score >= 50 %}match-mid{% else %}match-low{% endif %}">
+                                    {{ app.match_score }}%
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-{% if app.status == 'pending' %}warning{% elif app.status == 'offer_issued' %}info{% elif app.status == 'accepted' %}success{% else %}secondary{% endif %}">
+                                    {{ app.status|title }}
+                                </span>
+                            </td>
+                            <td>{{ app.applied_at|date:"M d, Y" }}</td>
+                            <td>
+                                {% if app.status == 'pending' %}
+                                    <a href="{% url 'companies:issue_offer' app.id %}" class="btn btn-success btn-sm">Issue Offer</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="card p-4 text-center text-muted">No applicants yet.</div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
