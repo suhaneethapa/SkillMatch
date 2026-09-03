@@ -1,0 +1,95 @@
+{% block extra_css %}
+<style>
+    /* Force sidebar text to be dark and readable */
+    .admin-sidebar .nav-link {
+        color: #495057 !important;  /* Dark gray, not orange */
+        font-weight: 500;
+        padding: 10px 15px;
+        border-radius: 8px;
+        margin-bottom: 4px;
+        transition: all 0.2s;
+    }
+    
+    /* Hover: slightly darker with light background */
+    .admin-sidebar .nav-link:hover {
+        color: #212529 !important;  /* Near black */
+        background-color: #e9ecef;
+    }
+    
+    /* Active page: white text on purple background */
+    .admin-sidebar .nav-link.active {
+        color: #ffffff !important;
+        background-color: #4f46e5;  /* Your purple theme color */
+        box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
+    }
+    
+    /* Fix the card in sidebar */
+    .admin-sidebar .card {
+        border: none;
+        background: #f8f9fa;
+    }
+</style>
+{% endblock %}
+<div class="row">
+    <!-- Sidebar -->
+    <div class="col-md-2">
+        <div class="card">
+            <div class="card-body p-2">
+                <h6 class="mb-3 text-uppercase text-muted small fw-bold">Admin Menu</h6>
+                <ul class="nav nav-pills flex-column admin-sidebar">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}" href="{% url 'admin_panel:dashboard' %}">
+                            📊 Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'user_list' %}active{% endif %}" href="{% url 'admin_panel:user_list' %}">
+                            👥 Users
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'company_list' %}active{% endif %}" href="{% url 'admin_panel:company_list' %}">
+                            🏢 Companies
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'internship_list' %}active{% endif %}" href="{% url 'admin_panel:internship_list' %}">
+                            📋 Listings
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'application_list' %}active{% endif %}" href="{% url 'admin_panel:application_list' %}">
+                            📝 Applications
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'skill_list' %}active{% endif %}" href="{% url 'admin_panel:skill_list' %}">
+                            🛠️ Skills
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'category_list' %}active{% endif %}" href="{% url 'admin_panel:category_list' %}">
+                            📂 Categories
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'journal_list' %}active{% endif %}" href="{% url 'admin_panel:journal_list' %}">
+                            📖 Journals
+                        </a>
+                    </li>
+                    <li class="nav-item mt-2">
+                        <a class="nav-link" href="{% url 'admin:index' %}" target="_blank">
+                            ⚙️ Django Admin
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="col-md-10">
+        {% block admin_content %}{% endblock %}
+    </div>
+</div>
+{% endblock %}

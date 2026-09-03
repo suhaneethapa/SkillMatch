@@ -1,0 +1,50 @@
+{% extends 'admin_panel/base_admin.html' %}
+
+{% block title %}Manage Companies - SkillMatch{% endblock %}
+
+{% block admin_content %}
+<h4 class="mb-4">All Companies</h4>
+
+<div class="card">
+    <div class="card-body p-0">
+        <table class="table table-hover mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>ID</th>
+                    <th>Organization</th>
+                    <th>Contact</th>
+                    <th>Industry</th>
+                    <th>Status</th>
+                    <th>Listings</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in companies %}
+                <tr>
+                    <td>{{ c.id }}</td>
+                    <td>{{ c.organization_name }}</td>
+                    <td>{{ c.contact_person }}</td>
+                    <td>{{ c.industry }}</td>
+                    <td>
+                        {% if c.suspended %}
+                            <span class="badge bg-danger">Suspended</span>
+                        {% else %}
+                            <span class="badge bg-success">Active</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ c.internships.count }}</td>
+                    <td>
+                        <a href="{% url 'admin_panel:suspend_company' c.id %}" class="btn btn-sm btn-outline-{% if c.suspended %}success{% else %}danger{% endif %}">
+                            {% if c.suspended %}Reinstate{% else %}Suspend{% endif %}
+                        </a>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="7" class="text-center text-muted py-4">No companies found</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
