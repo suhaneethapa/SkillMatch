@@ -26,7 +26,10 @@
                 <div class="d-flex justify-content-between align-items-center mt-3">
                     <span class="badge bg-light text-dark">{{ item.internship.location_type|title }}</span>
                     {% if item.eligible %}
-                        <a href="{% url 'students:apply_internship' item.internship.id %}" class="btn btn-primary btn-sm">Apply</a>
+                        <form method="post" action="{% url 'students:apply_internship' item.internship.id %}" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+                        </form>
                     {% else %}
                         <span class="badge bg-secondary">Not Eligible (Need 50%)</span>
                     {% endif %}

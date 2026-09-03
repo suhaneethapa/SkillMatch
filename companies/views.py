@@ -22,7 +22,39 @@ def dashboard(request):
 
 @login_required
 def profile(request):
-    return render(request, 'companies/profile.html')
+    if request.user.role != 'company':
+        return redirect('accounts:home')
+    profile = request.user.company_profile
+    return render(request, 'companies/profile.html', {
+        'profile': profile
+    })
+
+
+@login_required
+def profile_edit(request):
+    if request.user.role != 'company':
+        return redirect('accounts:home')
+    
+    profile = request.user.company_profile
+    
+    if request.method == 'POST':
+        profile.organization_name = request.POST.get('organization_name', profile.organization_name)
+        profile.contact_person = request.POST.get('contact_person', profile.contact_person)
+        profile.industry = request.POST.get('industry', profile.industry)
+        profile.description = request.POST.get('description', profile.description)
+        profile.website_url = request.POST.get('website_url', '')
+        profile.hq_location = request.POST.get('hq_location', profile.hq_location)
+        
+        if request.FILES.get('logo'):
+            profile.logo = request.FILES['logo']
+        
+        profile.save()
+        messages.success(request, 'Company profile updated successfully!')
+        return redirect('companies:profile')
+    
+    return render(request, 'companies/profile_edit.html', {
+        'profile': profile
+    })
 
 
 @login_required
@@ -66,7 +98,7 @@ def create_listing(request):
             deadline=deadline,
             total_positions=positions,
             expected_duration=duration,
-            status='approved'  # Auto-approve for demo
+            status='approved'
         )
         
         for skill_id in required_skills:
@@ -108,14 +140,25 @@ def issue_offer(request, application_id):
         application.status = 'offer_issued'
         application.save()
         
-        # Auto-close if positions filled
         internship = application.internship
         accepted_count = internship.applications.filter(status='accepted').count()
         if accepted_count >= internship.total_positions:
             internship.status = 'closed'
             internship.save()
-            # Reject remaining pending
             internship.applications.filter(status='pending').update(status='rejected')
     
     messages.success(request, "Offer issued successfully!")
     return redirect('companies:view_applicants', internship_id=internship.id)
+
+
+@login_required
+def reject_applicant(request, application_id):
+    if request.user.role != 'company':
+        return redirect('accounts:home')
+    
+    application = get_object_or_404(Application, id=application_id, internship__company=request.user.company_profile)
+    application.status = 'rejected'
+    application.rejection_feedback = request.POST.get('feedback', '')
+    application.save()
+    messages.success(request, "Applicant rejected.")
+    return redirect('companies:view_applicants', internship_id=application.internship.id)

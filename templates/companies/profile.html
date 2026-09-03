@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block title %}Company Profile - SkillMatch{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h4>Company Profile</h4>
+                    <a href="{% url 'companies:profile_edit' %}" class="btn btn-primary btn-sm">Edit Profile</a>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <p class="mb-1"><strong>Organization:</strong> {{ profile.organization_name }}</p>
+                        <p class="mb-1"><strong>Contact:</strong> {{ profile.contact_person }}</p>
+                        <p class="mb-1"><strong>Industry:</strong> {{ profile.industry }}</p>
+                        <p class="mb-1"><strong>Location:</strong> {{ profile.hq_location }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        {% if profile.website_url %}
+                            <p class="mb-1"><strong>Website:</strong> <a href="{{ profile.website_url }}" target="_blank">{{ profile.website_url }}</a></p>
+                        {% endif %}
+                        <p class="mb-1"><strong>Email:</strong> {{ request.user.email }}</p>
+                        <p class="mb-1">
+                            <strong>Status:</strong>
+                            {% if profile.suspended %}
+                                <span class="badge bg-danger">Suspended</span>
+                            {% else %}
+                                <span class="badge bg-success">Active</span>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                
+                {% if profile.description %}
+                    <div class="mb-3">
+                        <strong>Description:</strong>
+                        <p class="text-muted">{{ profile.description }}</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card mb-3">
+            <div class="card-body text-center">
+                {% if profile.logo %}
+                    <img src="{{ profile.logo.url }}" alt="Logo" class="img-fluid rounded mb-2" style="max-height: 100px;">
+                {% else %}
+                    <div class="bg-light rounded-circle mx-auto mb-3" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
+                        🏢
+                    </div>
+                {% endif %}
+                <h6>{{ profile.organization_name }}</h6>
+                <span class="badge bg-primary">Company</span>
+            </div>
+        </div>
+        <div class="d-grid gap-2">
+            <a href="{% url 'companies:create_listing' %}" class="btn btn-primary">Post New Internship</a>
+            <a href="{% url 'companies:my_listings' %}" class="btn btn-outline-secondary">My Listings</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
