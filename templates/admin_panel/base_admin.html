@@ -1,8 +1,10 @@
+{% extends 'base.html' %}
+
 {% block extra_css %}
 <style>
     /* Force sidebar text to be dark and readable */
     .admin-sidebar .nav-link {
-        color: #495057 !important;  /* Dark gray, not orange */
+        color: #495057 !important;
         font-weight: 500;
         padding: 10px 15px;
         border-radius: 8px;
@@ -10,26 +12,20 @@
         transition: all 0.2s;
     }
     
-    /* Hover: slightly darker with light background */
     .admin-sidebar .nav-link:hover {
-        color: #212529 !important;  /* Near black */
+        color: #212529 !important;
         background-color: #e9ecef;
     }
     
-    /* Active page: white text on purple background */
     .admin-sidebar .nav-link.active {
         color: #ffffff !important;
-        background-color: #4f46e5;  /* Your purple theme color */
+        background-color: #4f46e5;
         box-shadow: 0 2px 8px rgba(79, 70, 229, 0.3);
-    }
-    
-    /* Fix the card in sidebar */
-    .admin-sidebar .card {
-        border: none;
-        background: #f8f9fa;
     }
 </style>
 {% endblock %}
+
+{% block content %}
 <div class="row">
     <!-- Sidebar -->
     <div class="col-md-2">
