@@ -34,11 +34,13 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     {% if user.is_authenticated %}
-                        {% if user.role == 'student' %}
-                            <li class="nav-item"><a class="nav-link" href="{% url 'students:dashboard' %}">Dashboard</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{% url 'students:browse_internships' %}">Browse</a></li>
+                       {% if user.role == 'student' %}
+    <li class="nav-item"><a class="nav-link" href="{% url 'students:dashboard' %}">Dashboard</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'students:profile' %}">Profile</a></li>
+    <li class="nav-item"><a class="nav-link" href="{% url 'students:browse_internships' %}">Browse</a></li>
                         {% elif user.role == 'company' %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'companies:dashboard' %}">Dashboard</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'companies:my_listings' %}">My Listings</a></li>
                             <li class="nav-item"><a class="nav-link" href="{% url 'companies:create_listing' %}">Post Internship</a></li>
                         {% elif user.is_superuser %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'admin_panel:dashboard' %}">Admin</a></li>
