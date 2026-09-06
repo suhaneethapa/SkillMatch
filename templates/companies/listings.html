@@ -3,9 +3,9 @@
 {% block title %}My Listings - SkillMatch{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h4 class="mb-0">My Internship Listings</h4>
-    <a href="{% url 'companies:create_listing' %}" class="btn btn-primary">+ Post New</a>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">My Listings</h4>
+    <a href="{% url 'companies:create_listing' %}" class="btn btn-primary btn-sm">+ Post New</a>
 </div>
 
 {% if internships %}
