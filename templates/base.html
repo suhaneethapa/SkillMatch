@@ -23,6 +23,11 @@
         .stat-number { font-size: 2rem; font-weight: 700; color: var(--primary); }
     </style>
     {% block extra_css %}{% endblock %}
+    {% if user.is_authenticated %}
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    {% endif %}
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark">
