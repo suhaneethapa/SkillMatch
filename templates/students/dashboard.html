@@ -14,7 +14,9 @@
                 <div>
                     <h5 class="mb-1">{{ request.user.email }}</h5>
                     <p class="text-muted mb-0 small">
-                        {{ profile.college.name }} · {{ profile.department }} · Semester {{ profile.semester }}
+                        {% if profile.college.name %}{{ profile.college.name }}{% else %}No college{% endif %} · 
+                        {% if profile.department %}{{ profile.department }}{% else %}No department{% endif %} · 
+                        Semester {% if profile.semester %}{{ profile.semester }}{% else %}Not set{% endif %}
                     </p>
                 </div>
             </div>
