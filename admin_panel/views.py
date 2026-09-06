@@ -1,7 +1,6 @@
 import csv
 import json
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.contrib import messages
 from accounts.models import User
@@ -28,12 +27,10 @@ def dashboard(request):
     pending_internships = Internship.objects.filter(status='pending').count()
     pending_users = User.objects.filter(status='pending_admin').count()
     
-    # Calculate placement rate
     approved_students = User.objects.filter(role='student', status='active').count()
     placed_students = Application.objects.filter(status='accepted').values('student').distinct().count()
     placement_rate = round((placed_students / approved_students * 100), 1) if approved_students > 0 else 0.0
     
-    # Chart data
     months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
     application_volume = [12, 19, 15, 25, 32, 28, 35, 42, 38, 45, 50, 55]
     top_skills = ['Python', 'Django', 'JavaScript', 'React', 'MySQL', 'HTML/CSS', 'Git', 'REST API']
@@ -195,7 +192,7 @@ def csv_export(request, data_type):
             try:
                 profile = user.student_profile
                 writer.writerow([user.id, user.email, profile.college.name, profile.department, profile.semester, user.status])
-            except:
+            except Exception:
                 writer.writerow([user.id, user.email, 'N/A', 'N/A', 'N/A', user.status])
     
     elif data_type == 'companies':
@@ -204,17 +201,17 @@ def csv_export(request, data_type):
             try:
                 profile = user.company_profile
                 writer.writerow([user.id, user.email, profile.organization_name, profile.industry, profile.contact_person, profile.suspended])
-            except:
+            except Exception:
                 writer.writerow([user.id, user.email, 'N/A', 'N/A', 'N/A', 'N/A'])
     
     elif data_type == 'listings':
         writer.writerow(['ID', 'Title', 'Company', 'Category', 'Status', 'Positions', 'Deadline'])
-        for i in Internship.objects.all():
-            writer.writerow([i.id, i.title, i.company.organization_name, i.category.name, i.status, i.total_positions, i.deadline])
+        for listing in Internship.objects.all():
+            writer.writerow([listing.id, listing.title, listing.company.organization_name, listing.category.name, listing.status, listing.total_positions, listing.deadline])
     
     elif data_type == 'applications':
         writer.writerow(['ID', 'Student', 'Internship', 'Company', 'Match Score', 'Status', 'Applied'])
-        for a in Application.objects.all():
-            writer.writerow([a.id, a.student.email, a.internship.title, a.internship.company.organization_name, a.match_score, a.status, a.applied_at])
+        for app in Application.objects.all():
+            writer.writerow([app.id, app.student.email, app.internship.title, app.internship.company.organization_name, app.match_score, app.status, app.applied_at])
     
     return response
