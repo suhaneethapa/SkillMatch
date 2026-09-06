@@ -3,39 +3,57 @@
 {% block title %}My Applications - SkillMatch{% endblock %}
 
 {% block content %}
-<h4 class="mb-4">My Applications</h4>
+<div class="sm-page">
+    <div class="sm-section-header">
+        <h4 class="sm-section-title">My Applications</h4>
+        <a href="{% url 'students:browse_internships' %}" class="btn btn-sm btn-primary">+ Apply New</a>
+    </div>
 
-{% if applications %}
-    <div class="row">
-        {% for app in applications %}
-        <div class="col-md-6 mb-3">
-            <div class="card">
-                <div class="card-body">
-                    <h6>{{ app.internship.title }}</h6>
-                    <p class="text-muted small mb-1">{{ app.internship.company.organization_name }}</p>
-                    <div class="mb-2">
-                        <span class="badge bg-{% if app.status == 'pending' %}warning{% elif app.status == 'offer_issued' %}info{% elif app.status == 'accepted' %}success{% elif app.status == 'rejected' %}danger{% else %}secondary{% endif %}">
-                            {{ app.status|title }}
-                            {% if app.status == 'pending' %}
-                                <a href="{% url 'students:withdraw_application' app.id %}" class="btn btn-sm btn-outline-danger mt-2" onclick="return confirm('Withdraw this application?')">Withdraw</a>
-                            {% elif app.status == 'offer_issued' %}
-                                <a href="{% url 'students:view_offer' app.id %}" class="btn btn-sm btn-success mt-2">View Offer</a>
-                            {% endif %}
-                        </span>
-                        <span class="badge bg-secondary ms-2">Match: {{ app.match_score }}%</span>
+    {% if applications %}
+        <div class="sm-list-stack">
+            {% for app in applications %}
+            <div class="sm-list-item">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                    <div>
+                        <h6 class="mb-1" style="font-weight: 700; font-size: 0.95rem;">{{ app.internship.title }}</h6>
+                        <p class="mb-0 small" style="color: var(--text-muted);">{{ app.internship.company.organization_name }}</p>
                     </div>
-                    <p class="small text-muted mb-0">Applied: {{ app.applied_at|date:"M d, Y" }}</p>
-                    {% if app.status == 'pending' %}
-                        <a href="{% url 'students:withdraw_application' app.id %}" class="btn btn-sm btn-outline-danger mt-2" onclick="return confirm('Withdraw this application?')">Withdraw</a>
-                    {% endif %}
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="status-badge
+                            {% if app.status == 'pending' %}status-warning
+                            {% elif app.status == 'offer_issued' %}status-info
+                            {% elif app.status == 'accepted' %}status-success
+                            {% else %}status-danger{% endif %}">
+                            {{ app.status|title }}
+                        </span>
+                        <span class="match-pill
+                            {% if app.match_score >= 70 %}match-high
+                            {% elif app.match_score >= 50 %}match-mid
+                            {% else %}match-low{% endif %}">
+                            {{ app.match_score }}%
+                        </span>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-2">
+                    <span class="small" style="color: var(--text-muted);">Applied: {{ app.applied_at|date:"M d, Y" }}</span>
+                    <div>
+                        {% if app.status == 'pending' %}
+                            <a href="{% url 'students:withdraw_application' app.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Withdraw this application?')">Withdraw</a>
+                        {% elif app.status == 'offer_issued' %}
+                            <a href="{% url 'students:view_offer' app.id %}" class="btn btn-sm btn-success">View Offer</a>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-    </div>
-{% else %}
-    <div class="card p-4 text-center text-muted">
-        No applications yet. <a href="{% url 'students:browse_internships' %}">Browse internships</a>
-    </div>
-{% endif %}
+    {% else %}
+        <div class="sm-card">
+            <div class="sm-empty">
+                <p class="sm-empty-title">No applications yet</p>
+                <a href="{% url 'students:browse_internships' %}" class="btn btn-primary btn-sm">Browse internships</a>
+            </div>
+        </div>
+    {% endif %}
+</div>
 {% endblock %}

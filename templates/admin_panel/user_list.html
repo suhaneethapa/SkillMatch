@@ -3,8 +3,8 @@
 {% block title %}Manage Users - SkillMatch{% endblock %}
 
 {% block admin_content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h4>All Users</h4>
+<div class="sm-section-header">
+    <h4 class="sm-section-title">All Users</h4>
     <div class="btn-group">
         <a href="?role=student" class="btn btn-outline-primary btn-sm {% if role_filter == 'student' %}active{% endif %}">Students</a>
         <a href="?role=company" class="btn btn-outline-primary btn-sm {% if role_filter == 'company' %}active{% endif %}">Companies</a>
@@ -13,38 +13,50 @@
     </div>
 </div>
 
-<div class="card">
-    <div class="card-body p-0">
-        <table class="table table-hover mb-0">
-            <thead class="table-light">
-                <tr>
-                    <th>ID</th>
-                    <th>Email</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Joined</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                <tr>
-                    <td>{{ user.id }}</td>
-                    <td>{{ user.email }}</td>
-                    <td><span class="badge bg-{% if user.role == 'student' %}info{% elif user.role == 'company' %}primary{% else %}dark{% endif %}">{{ user.role|title }}</span></td>
-                    <td><span class="badge bg-{% if user.status == 'active' %}success{% elif user.status == 'pending_admin' %}warning{% else %}secondary{% endif %}">{{ user.status|title }}</span></td>
-                    <td>{{ user.date_joined|date:"M d, Y" }}</td>
-                    <td>
-                        <a href="{% url 'admin_panel:toggle_user' user.id %}" class="btn btn-sm btn-outline-{% if user.status == 'active' %}danger{% else %}success{% endif %}">
-                            {% if user.status == 'active' %}Suspend{% elif user.status == 'suspended' %}Reinstate{% else %}Activate{% endif %}
-                        </a>
-                    </td>
-                </tr>
-                {% empty %}
-                <tr><td colspan="6" class="text-center text-muted py-4">No users found</td></tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
+<div class="sm-table-wrap">
+    <table class="sm-table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Joined</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.email }}</td>
+                <td>
+                    <span class="status-badge
+                        {% if user.role == 'student' %}status-info
+                        {% elif user.role == 'company' %}status-info
+                        {% else %}status-muted{% endif %}">
+                        {{ user.role|title }}
+                    </span>
+                </td>
+                <td>
+                    <span class="status-badge
+                        {% if user.status == 'active' %}status-success
+                        {% elif user.status == 'pending_admin' %}status-warning
+                        {% else %}status-muted{% endif %}">
+                        {{ user.status|title }}
+                    </span>
+                </td>
+                <td style="color: var(--text-muted);">{{ user.date_joined|date:"M d, Y" }}</td>
+                <td>
+                    <a href="{% url 'admin_panel:toggle_user' user.id %}" class="btn btn-sm btn-outline-{% if user.status == 'active' %}danger{% else %}success{% endif %}">
+                        {% if user.status == 'active' %}Suspend{% elif user.status == 'suspended' %}Reinstate{% else %}Activate{% endif %}
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" class="text-center text-muted py-4">No users found</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}
