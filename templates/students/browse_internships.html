@@ -10,28 +10,73 @@
     <div class="col-md-6 col-lg-4 mb-4">
         <div class="card h-100">
             <div class="card-body">
+                <!-- Title + Match Score -->
                 <div class="d-flex justify-content-between align-items-start mb-2">
                     <h6 class="card-title mb-0">{{ item.internship.title }}</h6>
                     <span class="match-badge badge {% if item.score >= 70 %}match-high{% elif item.score >= 50 %}match-mid{% else %}match-low{% endif %} rounded-pill">
                         {{ item.score }}%
                     </span>
                 </div>
-                <p class="text-muted small mb-2">{{ item.internship.company.organization_name }}</p>
-                <p class="small mb-2">{{ item.internship.description|truncatewords:15 }}</p>
                 
+                <!-- Company -->
+                <p class="text-muted small mb-2">
+                    {% if item.internship.company.logo %}
+                        <img src="{{ item.internship.company.logo.url }}" style="height: 16px; width: 16px; border-radius: 50%;" alt="">
+                    {% endif %}
+                    {{ item.internship.company.organization_name }}
+                </p>
+                
+                <!-- Description -->
+                <p class="small mb-2">{{ item.internship.description|truncatewords:12 }}</p>
+                
+                <!-- Key Details Row -->
+                <div class="d-flex flex-wrap gap-1 mb-2">
+                    <span class="badge bg-light text-dark border">
+                        Rs. {{ item.internship.stipend|default:"Unpaid" }}
+                    </span>
+                    <span class="badge bg-light text-dark border">
+                        {{ item.internship.location_type|title }}
+                    </span>
+                    <span class="badge bg-light text-dark border">
+                        {{ item.internship.expected_duration }}
+                    </span>
+                    <span class="badge bg-light text-dark border">
+                        {{ item.internship.total_positions }} slot{{ item.internship.total_positions|pluralize }}
+                    </span>
+                </div>
+                
+                <!-- Deadline + Days Left -->
+                <div class="mb-2">
+                    {% with days_left=item.internship.deadline|timeuntil:today %}
+                        {% if item.internship.deadline < today %}
+                            <span class="badge bg-danger">Expired {{ item.internship.deadline|timesince }} ago</span>
+                        {% elif days_left == "0 minutes" %}
+                            <span class="badge bg-danger">Deadline: Today!</span>
+                        {% else %}
+                            <span class="badge bg-secondary">Closes in {{ days_left }}</span>
+                        {% endif %}
+                    {% endwith %}
+                    <span class="small text-muted">(Deadline: {{ item.internship.deadline }})</span>
+                </div>
+                
+                <!-- Skills Gap -->
                 {% if item.gap %}
-                    <p class="small text-danger mb-2"><strong>Missing:</strong> {{ item.gap|join:", " }}</p>
+                    <p class="small text-danger mb-2">
+                        <strong>Missing:</strong> {{ item.gap|join:", " }}
+                    </p>
                 {% endif %}
                 
+                <!-- Action -->
                 <div class="d-flex justify-content-between align-items-center mt-3">
-                    <span class="badge bg-light text-dark">{{ item.internship.location_type|title }}</span>
-                    {% if item.eligible %}
+                    {% if item.internship.deadline < today %}
+                        <span class="badge bg-secondary">Closed</span>
+                    {% elif item.eligible %}
                         <form method="post" action="{% url 'students:apply_internship' item.internship.id %}" class="d-inline">
                             {% csrf_token %}
-                            <button type="submit" class="btn btn-primary btn-sm">Apply</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Apply Now</button>
                         </form>
                     {% else %}
-                        <span class="badge bg-secondary">Not Eligible (Need 50%)</span>
+                        <span class="badge bg-secondary">Need 50% Match</span>
                     {% endif %}
                 </div>
             </div>

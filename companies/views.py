@@ -25,11 +25,14 @@ def profile(request):
     if request.user.role != 'company':
         return redirect('accounts:home')
     profile = request.user.company_profile
-    return render(request, 'companies/profile.html', {
-        'profile': profile
+    from datetime import date
+    return render(request, 'companies/dashboard.html', {
+        'internships': internships,
+        'profile': profile,
+        'today': date.today(),
     })
 
-
+@login_required
 @login_required
 def profile_edit(request):
     if request.user.role != 'company':
@@ -45,15 +48,31 @@ def profile_edit(request):
         profile.website_url = request.POST.get('website_url', '')
         profile.hq_location = request.POST.get('hq_location', profile.hq_location)
         
+        # Handle logo upload with validation
         if request.FILES.get('logo'):
-            profile.logo = request.FILES['logo']
+            logo = request.FILES['logo']
+            
+            # Check file size (max 2MB)
+            if logo.size > 2 * 1024 * 1024:
+                messages.error(request, 'Logo file too large. Maximum size is 2MB.')
+                return redirect('companies:profile_edit')
+            
+            # Check file type
+            if not logo.content_type.startswith('image/'):
+                messages.error(request, 'Only image files (PNG, JPG, GIF) are allowed for logo.')
+                return redirect('companies:profile_edit')
+            
+            profile.logo = logo
+            messages.success(request, 'Logo uploaded successfully!')
         
         profile.save()
         messages.success(request, 'Company profile updated successfully!')
         return redirect('companies:profile')
     
-    return render(request, 'companies/profile_edit.html', {
-        'profile': profile
+    from datetime import date
+    return render(request, 'companies/listings.html', {
+        'internships': internships,
+        'today': date.today(),
     })
 
 

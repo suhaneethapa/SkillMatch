@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import transaction
+from django.utils import timezone
 from companies.models import Internship
 from .models import Application, StudentProfile, StudentSkill
 from core.models import Skill, College
@@ -108,8 +109,12 @@ def browse_internships(request):
     
     listings_with_scores.sort(key=lambda x: x['score'], reverse=True)
     
+    from django.utils import timezone
+    from datetime import date
+    
     return render(request, 'students/browse_internships.html', {
-        'listings': listings_with_scores
+        'listings': listings_with_scores,
+        'today': timezone.now(),
     })
 
 
