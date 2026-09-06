@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.db import transaction
+from datetime import date
 from .models import Internship, InternshipSkill, CompanyProfile
 from core.models import Skill, Category
 from students.models import Application
@@ -24,15 +24,16 @@ def dashboard(request):
 def profile(request):
     if request.user.role != 'company':
         return redirect('accounts:home')
+    
     profile = request.user.company_profile
-    from datetime import date
+    internships = profile.internships.all()
     return render(request, 'companies/dashboard.html', {
         'internships': internships,
         'profile': profile,
         'today': date.today(),
     })
 
-@login_required
+
 @login_required
 def profile_edit(request):
     if request.user.role != 'company':
@@ -69,10 +70,8 @@ def profile_edit(request):
         messages.success(request, 'Company profile updated successfully!')
         return redirect('companies:profile')
     
-    from datetime import date
-    return render(request, 'companies/listings.html', {
-        'internships': internships,
-        'today': date.today(),
+    return render(request, 'companies/profile_edit.html', {
+        'profile': profile,
     })
 
 
@@ -83,7 +82,8 @@ def my_listings(request):
     
     internships = request.user.company_profile.internships.all()
     return render(request, 'companies/listings.html', {
-        'internships': internships
+        'internships': internships,
+        'today': date.today(),
     })
 
 
@@ -131,6 +131,23 @@ def create_listing(request):
     return render(request, 'companies/create_listing.html', {
         'skills': skills,
         'categories': categories
+    })
+
+
+@login_required
+def delete_listing(request, internship_id):
+    if request.user.role != 'company':
+        return redirect('accounts:home')
+    
+    internship = get_object_or_404(Internship, id=internship_id, company=request.user.company_profile)
+    
+    if request.method == 'POST':
+        internship.delete()
+        messages.success(request, "Internship listing deleted successfully.")
+        return redirect('companies:my_listings')
+    
+    return render(request, 'companies/confirm_delete.html', {
+        'internship': internship,
     })
 
 

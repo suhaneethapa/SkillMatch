@@ -66,6 +66,7 @@
                         {% if i.status == 'approved' and i.deadline >= today %}
                             <a href="#" class="btn btn-outline-secondary btn-sm">Edit</a>
                         {% endif %}
+                        <a href="{% url 'companies:delete_listing' i.id %}" class="btn btn-outline-danger btn-sm">Delete</a>
                     </div>
                 </div>
             </div>

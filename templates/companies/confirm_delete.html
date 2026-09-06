@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}Delete Internship - SkillMatch{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-body text-center">
+                <h5 class="card-title text-danger">Delete Internship?</h5>
+                <p class="card-text">
+                    Are you sure you want to delete <strong>{{ internship.title }}</strong>?
+                    <br>This action cannot be undone.
+                </p>
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                    <a href="{% url 'companies:my_listings' %}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -68,8 +68,10 @@ def logout_view(request):
 
 
 def verify_email(request, token):
+    # token captured from URL for future verification logic
     return render(request, 'accounts/verify.html', {'token': token})
 
 
 def password_reset_request(request):
+    # TODO: implement password reset flow
     return render(request, 'accounts/password_reset.html')

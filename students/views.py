@@ -108,10 +108,7 @@ def browse_internships(request):
         })
     
     listings_with_scores.sort(key=lambda x: x['score'], reverse=True)
-    
-    from django.utils import timezone
-    from datetime import date
-    
+        
     return render(request, 'students/browse_internships.html', {
         'listings': listings_with_scores,
         'today': timezone.now(),
