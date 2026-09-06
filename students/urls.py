@@ -12,4 +12,7 @@ urlpatterns = [
     path('applications/', views.my_applications, name='my_applications'),
     path('apply/<int:internship_id>/', views.apply_internship, name='apply_internship'),
     path('withdraw/<int:application_id>/', views.withdraw_application, name='withdraw_application'),
+    path('offer/<int:application_id>/', views.view_offer, name='view_offer'),
+    path('offer/<int:application_id>/accept/', views.accept_offer, name='accept_offer'),
+    path('offer/<int:application_id>/decline/', views.decline_offer, name='decline_offer'),
 ]

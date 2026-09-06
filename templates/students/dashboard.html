@@ -14,9 +14,9 @@
                         <div class="card-body">
                             <h6>{{ app.internship.title }}</h6>
                             <p class="text-muted small mb-1">{{ app.internship.company.organization_name }}</p>
-                            <span class="badge bg-{% if app.status == 'pending' %}warning{% elif app.status == 'accepted' %}success{% elif app.status == 'rejected' %}danger{% else %}info{% endif %}">
-                                {{ app.status|title }}
-                            </span>
+                                <span class="badge bg-{% if app.status == 'pending' %}warning{% elif app.status == 'offer_issued' %}info{% elif app.status == 'accepted' %}success{% else %}danger{% endif %}">
+                                    {{ app.status|title }}
+                                </span>
                             <span class="badge bg-secondary ms-2">Match: {{ app.match_score }}%</span>
                         </div>
                     </div>

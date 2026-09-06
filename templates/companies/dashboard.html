@@ -21,9 +21,9 @@
                                 Status: <span class="badge bg-{% if internship.status == 'approved' %}success{% elif internship.status == 'closed' %}dark{% else %}warning{% endif %}">{{ internship.status|title }}</span>
                             </p>
                             <div class="d-flex flex-wrap gap-1 mb-2">
-                                <span class="badge bg-light text-dark border">💰 Rs. {{ internship.stipend|default:"Unpaid" }}</span>
-                                <span class="badge bg-light text-dark border">📍 {{ internship.location_type|title }}</span>
-                                <span class="badge bg-light text-dark border">⏱️ {{ internship.expected_duration }}</span>
+                                <span class="badge bg-light text-dark border">Rs. {{ internship.stipend|default:"Unpaid" }}</span>
+                                <span class="badge bg-light text-dark border">{{ internship.location_type|title }}</span>
+                                <span class="badge bg-light text-dark border">{{ internship.expected_duration }}</span>
                             </div>
                             <p class="small mb-1">
                                 <strong>Positions:</strong> {{ internship.total_positions }} total | 
@@ -35,7 +35,7 @@
                         {% if internship.deadline < today %}
                             <span class="badge bg-danger">Expired</span>
                         {% else %}
-                            <span class="badge bg-info">{{ internship.deadline|timeuntil }} left</span>
+                            <span class="badge bg-secondary">{{ internship.deadline|timeuntil }} left</span>
                         {% endif %}
                     </p>
                             <a href="{% url 'companies:view_applicants' internship.id %}" class="btn btn-outline-primary btn-sm">View Applicants</a>

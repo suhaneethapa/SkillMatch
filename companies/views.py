@@ -155,19 +155,19 @@ def issue_offer(request, application_id):
     
     application = get_object_or_404(Application, id=application_id, internship__company=request.user.company_profile)
     
-    with transaction.atomic():
+    if request.method == 'POST':
+        if request.FILES.get('offer_letter'):
+            application.offer_letter = request.FILES['offer_letter']
+        
         application.status = 'offer_issued'
         application.save()
         
-        internship = application.internship
-        accepted_count = internship.applications.filter(status='accepted').count()
-        if accepted_count >= internship.total_positions:
-            internship.status = 'closed'
-            internship.save()
-            internship.applications.filter(status='pending').update(status='rejected')
+        messages.success(request, "Offer letter issued successfully!")
+        return redirect('companies:view_applicants', internship_id=application.internship.id)
     
-    messages.success(request, "Offer issued successfully!")
-    return redirect('companies:view_applicants', internship_id=internship.id)
+    return render(request, 'companies/issue_offer.html', {
+        'application': application
+    })
 
 
 @login_required

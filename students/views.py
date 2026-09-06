@@ -173,3 +173,47 @@ def withdraw_application(request, application_id):
     application.save()
     messages.success(request, 'Application withdrawn successfully.')
     return redirect('students:my_applications')
+
+@login_required
+def view_offer(request, application_id):
+    if request.user.role != 'student':
+        return redirect('accounts:home')
+    
+    application = get_object_or_404(Application, id=application_id, student=request.user, status='offer_issued')
+    return render(request, 'students/view_offer.html', {
+        'application': application
+    })
+
+
+@login_required
+def accept_offer(request, application_id):
+    if request.user.role != 'student':
+        return redirect('accounts:home')
+    
+    application = get_object_or_404(Application, id=application_id, student=request.user, status='offer_issued')
+    application.status = 'accepted'
+    application.save()
+    
+    # Auto-close if positions filled
+    internship = application.internship
+    accepted_count = internship.applications.filter(status='accepted').count()
+    if accepted_count >= internship.total_positions:
+        internship.status = 'closed'
+        internship.save()
+        internship.applications.filter(status='pending').update(status='rejected')
+        messages.info(request, "This internship is now closed as all positions have been filled.")
+    
+    messages.success(request, "Congratulations! You have accepted the offer.")
+    return redirect('students:my_applications')
+
+
+@login_required
+def decline_offer(request, application_id):
+    if request.user.role != 'student':
+        return redirect('accounts:home')
+    
+    application = get_object_or_404(Application, id=application_id, student=request.user, status='offer_issued')
+    application.status = 'rejected'
+    application.save()
+    messages.success(request, "Offer declined. The company may contact other candidates.")
+    return redirect('students:my_applications')

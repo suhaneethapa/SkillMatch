@@ -31,9 +31,15 @@
                                 </span>
                             </td>
                             <td>
-                                <span class="badge bg-{% if app.status == 'pending' %}warning{% elif app.status == 'offer_issued' %}info{% elif app.status == 'accepted' %}success{% else %}secondary{% endif %}">
-                                    {{ app.status|title }}
-                                </span>
+                                {% if app.status == 'pending' %}
+                                    <a href="{% url 'companies:issue_offer' app.id %}" class="btn btn-success btn-sm">Issue Offer</a>
+                                {% elif app.status == 'offer_issued' %}
+                                    <span class="badge bg-info">Offer Sent</span>
+                                {% elif app.status == 'accepted' %}
+                                    <span class="badge bg-success">Accepted</span>
+                                {% elif app.status == 'rejected' %}
+                                    <span class="badge bg-danger">Rejected</span>
+                                {% endif %}
                             </td>
                             <td>{{ app.applied_at|date:"M d, Y" }}</td>
                             <td>

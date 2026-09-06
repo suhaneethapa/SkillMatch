@@ -16,6 +16,11 @@
                     <div class="mb-2">
                         <span class="badge bg-{% if app.status == 'pending' %}warning{% elif app.status == 'offer_issued' %}info{% elif app.status == 'accepted' %}success{% elif app.status == 'rejected' %}danger{% else %}secondary{% endif %}">
                             {{ app.status|title }}
+                            {% if app.status == 'pending' %}
+                                <a href="{% url 'students:withdraw_application' app.id %}" class="btn btn-sm btn-outline-danger mt-2" onclick="return confirm('Withdraw this application?')">Withdraw</a>
+                            {% elif app.status == 'offer_issued' %}
+                                <a href="{% url 'students:view_offer' app.id %}" class="btn btn-sm btn-success mt-2">View Offer</a>
+                            {% endif %}
                         </span>
                         <span class="badge bg-secondary ms-2">Match: {{ app.match_score }}%</span>
                     </div>
