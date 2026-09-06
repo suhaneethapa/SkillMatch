@@ -3,36 +3,40 @@
 {% block title %}Edit Skills - SkillMatch{% endblock %}
 
 {% block content %}
-<div class="sm-page-medium">
-    <div class="sm-card">
-        <div class="sm-card-body">
-            <h4 class="mb-3" style="font-weight: 700;">Select Your Skills</h4>
-            <p class="small text-muted mb-4">Select all skills you have. These will be used to calculate your match score with internships.</p>
-
-            <form method="post" class="sm-form">
-                {% csrf_token %}
-                {% regroup all_skills by category as skill_groups %}
-                {% for group in skill_groups %}
-                    <div class="mb-4">
-                        <h6 style="font-weight: 700; color: var(--primary); margin-bottom: 12px;">{{ group.grouper.name }}</h6>
-                        <div class="row">
-                            {% for skill in group.list %}
-                                <div class="col-md-4 mb-2">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="skills" value="{{ skill.id }}" id="skill_{{ skill.id }}" {% if skill.id in user_skill_ids %}checked{% endif %}>
-                                        <label class="form-check-label small" for="skill_{{ skill.id }}">{{ skill.name }}</label>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body p-4">
+                <h4 class="mb-4">Select Your Skills</h4>
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <p class="text-muted small">Select all skills you have. These will be used to calculate your match score with internships.</p>
                     </div>
-                {% endfor %}
-
-                <div class="d-flex gap-2 mt-4">
-                    <button type="submit" class="btn btn-primary">Save Skills</button>
-                    <a href="{% url 'students:profile' %}" class="btn btn-outline-secondary">Cancel</a>
-                </div>
-            </form>
+                    
+                    {% regroup all_skills by category as skill_groups %}
+                    {% for group in skill_groups %}
+                        <div class="mb-3">
+                            <h6 class="text-primary">{{ group.grouper.name }}</h6>
+                            <div class="row">
+                                {% for skill in group.list %}
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" name="skills" value="{{ skill.id }}" id="skill_{{ skill.id }}" {% if skill.id in user_skill_ids %}checked{% endif %}>
+                                            <label class="form-check-label" for="skill_{{ skill.id }}">{{ skill.name }}</label>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endfor %}
+                    
+                    <div class="d-flex gap-2 mt-3">
+                        <button type="submit" class="btn btn-primary">Save Skills</button>
+                        <a href="{% url 'students:profile' %}" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 </div>

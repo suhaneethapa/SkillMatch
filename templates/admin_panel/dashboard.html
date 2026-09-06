@@ -3,83 +3,81 @@
 {% block title %}Admin Dashboard - SkillMatch{% endblock %}
 
 {% block admin_content %}
-<div class="sm-section-header">
-    <h4 class="sm-section-title">Admin Dashboard</h4>
-</div>
+<h4 class="mb-4">Admin Dashboard</h4>
 
-<!-- Stats Row -->
-<div class="row g-3 mb-3">
-    <div class="col-md-2 col-6">
-        <div class="sm-stat-card">
-            <div class="sm-stat-number">{{ total_students }}</div>
-            <div class="sm-stat-label">Students</div>
+<!-- Stats Cards -->
+<div class="row mb-4">
+    <div class="col-md-2">
+        <div class="card stat-card">
+            <div class="stat-number">{{ total_students }}</div>
+            <div class="text-muted small">Students</div>
         </div>
     </div>
-    <div class="col-md-2 col-6">
-        <div class="sm-stat-card">
-            <div class="sm-stat-number">{{ total_companies }}</div>
-            <div class="sm-stat-label">Companies</div>
+    <div class="col-md-2">
+        <div class="card stat-card">
+            <div class="stat-number">{{ total_companies }}</div>
+            <div class="text-muted small">Companies</div>
         </div>
     </div>
-    <div class="col-md-2 col-6">
-        <div class="sm-stat-card">
-            <div class="sm-stat-number">{{ total_listings }}</div>
-            <div class="sm-stat-label">Listings</div>
+    <div class="col-md-2">
+        <div class="card stat-card">
+            <div class="stat-number">{{ total_listings }}</div>
+            <div class="text-muted small">Listings</div>
         </div>
     </div>
-    <div class="col-md-2 col-6">
-        <div class="sm-stat-card">
-            <div class="sm-stat-number">{{ total_applications }}</div>
-            <div class="sm-stat-label">Applications</div>
+    <div class="col-md-2">
+        <div class="card stat-card">
+            <div class="stat-number">{{ total_applications }}</div>
+            <div class="text-muted small">Applications</div>
         </div>
     </div>
-    <div class="col-md-2 col-6">
-        <div class="sm-stat-card">
-            <div class="sm-stat-number" style="color: var(--warning);">{{ pending_internships }}</div>
-            <div class="sm-stat-label">Pending</div>
+    <div class="col-md-2">
+        <div class="card stat-card">
+            <div class="stat-number text-warning">{{ pending_internships }}</div>
+            <div class="text-muted small">Pending</div>
         </div>
     </div>
-    <div class="col-md-2 col-6">
-        <div class="sm-stat-card">
-            <div class="sm-stat-number" style="color: var(--success);">{{ placement_rate }}%</div>
-            <div class="sm-stat-label">Placement Rate</div>
+    <div class="col-md-2">
+        <div class="card stat-card">
+            <div class="stat-number text-success">{{ placement_rate }}%</div>
+            <div class="text-muted small">Placement Rate</div>
         </div>
     </div>
 </div>
 
 <!-- Charts -->
-<div class="row g-3 mb-3">
+<div class="row mb-4">
     <div class="col-md-6">
-        <div class="sm-card">
-            <div class="sm-card-body">
-                <h6 style="font-weight: 700; margin-bottom: 16px;">Monthly Application Volume</h6>
+        <div class="card">
+            <div class="card-body">
+                <h6>Monthly Application Volume</h6>
                 <canvas id="volumeChart" height="200"></canvas>
             </div>
         </div>
     </div>
     <div class="col-md-6">
-        <div class="sm-card">
-            <div class="sm-card-body">
-                <h6 style="font-weight: 700; margin-bottom: 16px;">Top Required Skills</h6>
+        <div class="card">
+            <div class="card-body">
+                <h6>Top Required Skills</h6>
                 <canvas id="skillsChart" height="200"></canvas>
             </div>
         </div>
     </div>
 </div>
 
-<div class="row g-3 mb-3">
+<div class="row mb-4">
     <div class="col-md-6">
-        <div class="sm-card">
-            <div class="sm-card-body">
-                <h6 style="font-weight: 700; margin-bottom: 16px;">Application Status Breakdown</h6>
+        <div class="card">
+            <div class="card-body">
+                <h6>Application Status Breakdown</h6>
                 <canvas id="statusChart" height="250"></canvas>
             </div>
         </div>
     </div>
     <div class="col-md-6">
-        <div class="sm-card">
-            <div class="sm-card-body">
-                <h6 style="font-weight: 700; margin-bottom: 16px;">Quick Actions</h6>
+        <div class="card">
+            <div class="card-body">
+                <h6>Quick Actions</h6>
                 <div class="d-grid gap-2">
                     <a href="{% url 'admin_panel:user_list' %}" class="btn btn-outline-primary">Manage Users</a>
                     <a href="{% url 'admin_panel:internship_list' %}" class="btn btn-outline-primary">Approve Listings</a>
@@ -94,80 +92,74 @@
 </div>
 
 <!-- Recent Activity -->
-<div class="row g-3">
+<div class="row">
     <div class="col-md-6">
-        <div class="sm-card">
-            <div class="sm-card-body">
-                <h6 style="font-weight: 700; margin-bottom: 16px;">Recent Applications</h6>
-                <div class="sm-table-wrap">
-                    <table class="sm-table">
-                        <thead>
-                            <tr>
-                                <th>Student</th>
-                                <th>Internship</th>
-                                <th>Score</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for app in recent_applications %}
-                            <tr>
-                                <td>{{ app.student.email }}</td>
-                                <td>{{ app.internship.title|truncatechars:20 }}</td>
-                                <td>{{ app.match_score }}%</td>
-                                <td>
-                                    <span class="status-badge
-                                        {% if app.status == 'pending' %}status-warning
-                                        {% elif app.status == 'accepted' %}status-success
-                                        {% else %}status-muted{% endif %}">
-                                        {{ app.status }}
-                                    </span>
-                                </td>
-                            </tr>
-                            {% empty %}
-                            <tr><td colspan="4" class="text-center text-muted py-3">No applications yet</td></tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+        <div class="card">
+            <div class="card-body">
+                <h6>Recent Applications</h6>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Internship</th>
+                            <th>Score</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for app in recent_applications %}
+                        <tr>
+                            <td>{{ app.student.email }}</td>
+                            <td>{{ app.internship.title|truncatechars:20 }}</td>
+                            <td>{{ app.match_score }}%</td>
+                            <td>
+                                <span class="badge bg-{% if app.status == 'pending' %}warning{% elif app.status == 'accepted' %}success{% else %}secondary{% endif %}">
+                                    {{ app.status }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-muted text-center">No applications yet</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
     <div class="col-md-6">
-        <div class="sm-card">
-            <div class="sm-card-body">
-                <h6 style="font-weight: 700; margin-bottom: 16px;">Recent Users</h6>
-                <div class="sm-table-wrap">
-                    <table class="sm-table">
-                        <thead>
-                            <tr>
-                                <th>Email</th>
-                                <th>Role</th>
-                                <th>Status</th>
-                                <th>Joined</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for u in recent_users %}
-                            <tr>
-                                <td>{{ u.email }}</td>
-                                <td>{{ u.role|title }}</td>
-                                <td>
-                                    <span class="status-badge
-                                        {% if u.status == 'active' %}status-success
-                                        {% elif u.status == 'pending' %}status-warning
-                                        {% else %}status-muted{% endif %}">
-                                        {{ u.status }}
-                                    </span>
-                                </td>
-                                <td style="color: var(--text-muted);">{{ u.date_joined|date:"M d" }}</td>
-                            </tr>
-                            {% empty %}
-                            <tr><td colspan="4" class="text-center text-muted py-3">No users yet</td></tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
+        <div class="card">
+            <div class="card-body">
+                <h6>Recent Users</h6>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Joined</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in recent_users %}
+                        <tr>
+                            <td>{{ u.email }}</td>
+                            <td>{{ u.role|title }}</td>
+                            <td>
+                                <span class="badge bg-{% if u.status == 'active' %}success{% elif u.status == 'pending' %}warning{% else %}secondary{% endif %}">
+                                    {{ u.status }}
+                                </span>
+                            </td>
+                            <td>{{ u.date_joined|date:"M d" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-muted text-center">No users yet</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

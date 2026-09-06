@@ -3,35 +3,27 @@
 {% block title %}Manage Categories - SkillMatch{% endblock %}
 
 {% block admin_content %}
-<div class="sm-section-header">
-    <h4 class="sm-section-title">Categories</h4>
-</div>
+<h4 class="mb-4">Categories</h4>
 
-<div class="row g-3">
+<div class="row">
     {% for cat in categories %}
-    <div class="col-md-4">
-        <div class="sm-card">
-            <div class="sm-card-body">
-                <h6 style="font-weight: 700; margin-bottom: 4px;">{{ cat.name }}</h6>
-                <p class="small mb-2" style="color: var(--text-muted);">{{ cat.skills.count }} skills</p>
-                <ul class="list-unstyled small mb-0" style="color: var(--text-muted);">
+    <div class="col-md-4 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <h6>{{ cat.name }}</h6>
+                <p class="text-muted small mb-2">{{ cat.skills.count }} skills</p>
+                <ul class="list-unstyled small">
                     {% for skill in cat.skills.all|slice:":5" %}
-                        <li class="mb-1">{{ skill.name }} {% if not skill.is_active %}<span class="status-badge status-muted">inactive</span>{% endif %}</li>
+                        <li>{{ skill.name }} {% if not skill.is_active %}<span class="badge bg-secondary">inactive</span>{% endif %}</li>
                     {% empty %}
-                        <li>No skills yet</li>
+                        <li class="text-muted">No skills yet</li>
                     {% endfor %}
                 </ul>
             </div>
         </div>
     </div>
     {% empty %}
-    <div class="col-12">
-        <div class="sm-card">
-            <div class="sm-empty">
-                <p class="sm-empty-title">No categories found</p>
-            </div>
-        </div>
-    </div>
+    <div class="col-12"><div class="card p-4 text-center text-muted">No categories found</div></div>
     {% endfor %}
 </div>
 {% endblock %}

@@ -3,66 +3,58 @@
 {% block title %}Applicants - {{ internship.title }}{% endblock %}
 
 {% block content %}
-<div class="sm-page">
-    <div class="sm-section-header">
-        <h4 class="sm-section-title">Applicants: {{ internship.title }}</h4>
-        <a href="{% url 'companies:view_applicants' internship.id %}" class="btn btn-sm btn-outline-secondary">Refresh</a>
-    </div>
-
-    {% if applications %}
-        <div class="sm-table-wrap">
-            <table class="sm-table">
-                <thead>
-                    <tr>
-                        <th>Rank</th>
-                        <th>Student</th>
-                        <th>Match Score</th>
-                        <th>Status</th>
-                        <th>Applied</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for app in applications %}
-                    <tr>
-                        <td style="font-weight: 700; color: var(--text-muted);">{{ forloop.counter }}</td>
-                        <td>{{ app.student.email }}</td>
-                        <td>
-                            <span class="match-pill
-                                {% if app.match_score >= 70 %}match-high
-                                {% elif app.match_score >= 50 %}match-mid
-                                {% else %}match-low{% endif %}">
-                                {{ app.match_score }}%
-                            </span>
-                        </td>
-                        <td>
-                            {% if app.status == 'pending' %}
-                                <span class="status-badge status-warning">Pending</span>
-                            {% elif app.status == 'offer_issued' %}
-                                <span class="status-badge status-info">Offer Sent</span>
-                            {% elif app.status == 'accepted' %}
-                                <span class="status-badge status-success">Accepted</span>
-                            {% elif app.status == 'rejected' %}
-                                <span class="status-badge status-danger">Rejected</span>
-                            {% endif %}
-                        </td>
-                        <td style="color: var(--text-muted);">{{ app.applied_at|date:"M d, Y" }}</td>
-                        <td>
-                            {% if app.status == 'pending' %}
-                                <a href="{% url 'companies:issue_offer' app.id %}" class="btn btn-sm btn-success">Issue Offer</a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    {% else %}
-        <div class="sm-card">
-            <div class="sm-empty">
-                <p class="sm-empty-title">No applicants yet</p>
+<div class="row">
+    <div class="col-md-12">
+        <h4 class="mb-4">Applicants for: {{ internship.title }}</h4>
+        
+        {% if applications %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Rank</th>
+                            <th>Student</th>
+                            <th>Match Score</th>
+                            <th>Status</th>
+                            <th>Applied</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for app in applications %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ app.student.email }}</td>
+                            <td>
+                                <span class="badge {% if app.match_score >= 70 %}match-high{% elif app.match_score >= 50 %}match-mid{% else %}match-low{% endif %}">
+                                    {{ app.match_score }}%
+                                </span>
+                            </td>
+                            <td>
+                                {% if app.status == 'pending' %}
+                                    <a href="{% url 'companies:issue_offer' app.id %}" class="btn btn-success btn-sm">Issue Offer</a>
+                                {% elif app.status == 'offer_issued' %}
+                                    <span class="badge bg-info">Offer Sent</span>
+                                {% elif app.status == 'accepted' %}
+                                    <span class="badge bg-success">Accepted</span>
+                                {% elif app.status == 'rejected' %}
+                                    <span class="badge bg-danger">Rejected</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ app.applied_at|date:"M d, Y" }}</td>
+                            <td>
+                                {% if app.status == 'pending' %}
+                                    <a href="{% url 'companies:issue_offer' app.id %}" class="btn btn-success btn-sm">Issue Offer</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-        </div>
-    {% endif %}
+        {% else %}
+            <div class="card p-4 text-center text-muted">No applicants yet.</div>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}

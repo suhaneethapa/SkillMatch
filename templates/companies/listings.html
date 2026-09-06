@@ -3,69 +3,64 @@
 {% block title %}My Listings - SkillMatch{% endblock %}
 
 {% block content %}
-<div class="sm-page">
-    <div class="sm-section-header">
-        <h4 class="sm-section-title">My Listings</h4>
-        <a href="{% url 'companies:create_listing' %}" class="btn btn-primary btn-sm-action">+ Post New</a>
-    </div>
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0">My Listings</h4>
+    <a href="{% url 'companies:create_listing' %}" class="btn btn-primary btn-sm">+ Post New</a>
+</div>
 
-    {% if internships %}
-        <div class="sm-list-stack">
-            {% for i in internships %}
-            <div class="sm-list-item">
-                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-2">
+{% if internships %}
+    <div class="d-flex flex-column gap-3">
+        {% for i in internships %}
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
                     <div>
-                        <h6 class="mb-1" style="font-weight: 700; font-size: 0.95rem;">{{ i.title }}</h6>
-                        <div class="d-flex gap-1">
-                            <span class="status-badge
-                                {% if i.status == 'approved' %}status-success
-                                {% elif i.status == 'closed' %}status-muted
-                                {% else %}status-warning{% endif %}">
-                                {{ i.status|title }}
-                            </span>
-                            <span class="status-badge status-muted">{{ i.category.name }}</span>
-                        </div>
+                        <h6 class="mb-1">{{ i.title }}</h6>
+                        <span class="badge bg-{% if i.status == 'approved' %}success{% elif i.status == 'closed' %}dark{% else %}warning{% endif %}">
+                            {{ i.status|title }}
+                        </span>
+                        <span class="badge bg-light text-dark border ms-1">{{ i.category.name }}</span>
                     </div>
                 </div>
 
-                <div class="sm-meta-row mb-2">
-                    <span>Rs. {{ i.stipend|default:"Unpaid" }}</span>
-                    <span>{{ i.location_type|title }}</span>
-                    <span>{{ i.expected_duration }}</span>
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    <span class="badge bg-light text-dark border">Rs. {{ i.stipend|default:"Unpaid" }}</span>
+                    <span class="badge bg-light text-dark border">{{ i.location_type|title }}</span>
+                    <span class="badge bg-light text-dark border">{{ i.expected_duration }}</span>
                 </div>
 
-                <p class="small mb-2" style="color: var(--text-muted);">
-                    <strong style="color: var(--text-secondary);">Positions:</strong> {{ i.total_positions }} total |
-                    <strong style="color: var(--text-secondary);">Remaining:</strong> {{ i.remaining_positions }} |
-                    <strong style="color: var(--text-secondary);">Applied:</strong> {{ i.applications.count }}
+                <p class="small mb-2">
+                    <strong>Positions:</strong> {{ i.total_positions }} total | 
+                    <strong>Remaining:</strong> {{ i.remaining_positions }} | 
+                    <strong>Applied:</strong> {{ i.applications.count }}
                 </p>
 
-                <p class="small mb-2" style="color: var(--text-muted);">
-                    <strong style="color: var(--text-secondary);">Deadline:</strong> {{ i.deadline }}
+                <p class="small mb-3">
+                    <strong>Deadline:</strong> {{ i.deadline }}
                     {% if i.deadline < today %}
-                        <span class="status-badge status-danger">Expired</span>
+                        <span class="badge bg-danger">Expired</span>
                     {% else %}
-                        <span class="status-badge status-muted">{{ i.deadline|timeuntil }} left</span>
+                        <span class="badge bg-secondary">{{ i.deadline|timeuntil }} left</span>
                     {% endif %}
                 </p>
 
                 <div class="d-flex gap-2">
-                    <a href="{% url 'companies:view_applicants' i.id %}" class="btn btn-sm btn-outline-primary">Applicants ({{ i.applications.count }})</a>
+                    <a href="{% url 'companies:view_applicants' i.id %}" class="btn btn-outline-primary btn-sm">
+                        View Applicants ({{ i.applications.count }})
+                    </a>
                     {% if i.status == 'approved' and i.deadline >= today %}
-                        <a href="#" class="btn btn-sm btn-outline-secondary">Edit</a>
+                        <a href="#" class="btn btn-outline-secondary btn-sm">Edit</a>
                     {% endif %}
-                    <a href="{% url 'companies:delete_listing' i.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                    <a href="{% url 'companies:delete_listing' i.id %}" class="btn btn-outline-danger btn-sm">Delete</a>
                 </div>
             </div>
-            {% endfor %}
         </div>
-    {% else %}
-        <div class="sm-card">
-            <div class="sm-empty">
-                <p class="sm-empty-title">No listings posted yet</p>
-                <a href="{% url 'companies:create_listing' %}" class="btn btn-primary btn-sm">Create one now</a>
-            </div>
-        </div>
-    {% endif %}
-</div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card p-5 text-center text-muted">
+        <p class="mb-3">No listings posted yet.</p>
+        <a href="{% url 'companies:create_listing' %}" class="btn btn-primary">Create one now</a>
+    </div>
+{% endif %}
 {% endblock %}

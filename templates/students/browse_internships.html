@@ -4,26 +4,27 @@
 
 {% block content %}
 <div class="internship-page">
-    <div class="sm-section-header">
-        <h4 class="sm-section-title">Available Internships</h4>
-        <span class="small" style="color: var(--text-muted);">{{ listings|length }} listing{{ listings|pluralize }}</span>
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0 fw-bold" style="color: #1f2937;">Available Internships</h4>
+        <span class="text-muted small">{{ listings|length }} listing{{ listings|pluralize }}</span>
     </div>
 
+    <!-- Internship Grid -->
     <div class="internship-grid">
         {% for item in listings %}
         <div class="internship-card">
+            <!-- Title + Match -->
             <div class="card-header-row">
                 <div style="min-width: 0;">
                     <div class="card-title-text">{{ item.internship.title }}</div>
                 </div>
-                <span class="match-pill
-                    {% if item.score >= 70 %}match-high
-                    {% elif item.score >= 50 %}match-mid
-                    {% else %}match-low{% endif %}">
+                <span class="match-pill {% if item.score >= 70 %}match-high{% elif item.score >= 50 %}match-mid{% else %}match-low{% endif %}">
                     {{ item.score }}%
                 </span>
             </div>
 
+            <!-- Company -->
             <div class="card-company">
                 {% if item.internship.company.logo %}
                     <img src="{{ item.internship.company.logo.url }}" alt="">
@@ -31,8 +32,10 @@
                 {{ item.internship.company.organization_name }}
             </div>
 
+            <!-- Description (clamped to 2 lines) -->
             <div class="card-desc">{{ item.internship.description }}</div>
 
+            <!-- Skills -->
             <div class="skills-row">
                 {% for skill in item.internship.internship_skills.all %}
                     <span class="skill-tag {% if skill.is_required %}req{% else %}pref{% endif %}">
@@ -43,6 +46,7 @@
                 {% endfor %}
             </div>
 
+            <!-- Metadata -->
             <div class="meta-row">
                 <span>{{ item.internship.stipend|default:"Unpaid" }}</span>
                 <span>{{ item.internship.location_type|title }}</span>
@@ -50,14 +54,16 @@
                 <span>{{ item.internship.total_positions }} slot{{ item.internship.total_positions|pluralize }}</span>
             </div>
 
+            <!-- Match Status -->
             <div class="match-status {% if item.gap %}missing{% else %}matched{% endif %}">
                 {% if item.gap %}
                     Missing: {{ item.gap|join:", " }}
                 {% else %}
-                    All required skills matched
+                    ✓ All required skills matched
                 {% endif %}
             </div>
 
+            <!-- Footer: Deadline + Action -->
             <div class="card-footer-row">
                 <span class="deadline-text {% if item.internship.deadline < today %}urgent{% endif %}">
                     {% if item.internship.deadline < today %}
@@ -69,14 +75,14 @@
 
                 <div>
                     {% if item.internship.deadline < today %}
-                        <span class="status-badge status-muted">Closed</span>
+                        <span class="badge bg-secondary btn-closed">Closed</span>
                     {% elif item.eligible %}
                         <form method="post" action="{% url 'students:apply_internship' item.internship.id %}" class="d-inline">
                             {% csrf_token %}
                             <button type="submit" class="btn btn-primary btn-apply">Apply</button>
                         </form>
                     {% else %}
-                        <span class="status-badge status-muted">Need 50%</span>
+                        <span class="badge bg-secondary btn-closed">Need 50%</span>
                     {% endif %}
                 </div>
             </div>

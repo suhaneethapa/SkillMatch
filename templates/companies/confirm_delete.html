@@ -3,21 +3,21 @@
 {% block title %}Delete Internship - SkillMatch{% endblock %}
 
 {% block content %}
-<div class="sm-page-narrow" style="padding-top: 48px;">
-    <div class="sm-card" style="border: 1px solid var(--danger-light);">
-        <div class="sm-card-body text-center">
-            <h5 class="mb-3" style="font-weight: 700; color: var(--danger);">Delete Internship?</h5>
-            <p class="mb-4" style="color: var(--text-muted);">
-                Are you sure you want to delete <strong style="color: var(--text-primary);">{{ internship.title }}</strong>?<br>
-                This action cannot be undone.
-            </p>
-            <form method="post">
-                {% csrf_token %}
-                <div class="d-flex justify-content-center gap-2">
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card border-danger">
+            <div class="card-body text-center">
+                <h5 class="card-title text-danger">Delete Internship?</h5>
+                <p class="card-text">
+                    Are you sure you want to delete <strong>{{ internship.title }}</strong>?
+                    <br>This action cannot be undone.
+                </p>
+                <form method="post">
+                    {% csrf_token %}
                     <button type="submit" class="btn btn-danger">Yes, Delete</button>
-                    <a href="{% url 'companies:my_listings' %}" class="btn btn-outline-secondary">Cancel</a>
-                </div>
-            </form>
+                    <a href="{% url 'companies:my_listings' %}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
         </div>
     </div>
 </div>
