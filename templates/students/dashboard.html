@@ -3,40 +3,96 @@
 {% block title %}Student Dashboard - SkillMatch{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-8">
-        <h4>My Applications</h4>
+<!-- Profile Header -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                    👤
+                </div>
+                <div>
+                    <h5 class="mb-1">{{ request.user.email }}</h5>
+                    <p class="text-muted mb-0 small">
+                        {{ profile.college.name }} · {{ profile.department }} · Semester {{ profile.semester }}
+                    </p>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{% url 'students:profile_edit' %}" class="btn btn-outline-primary">Edit Profile</a>
+                <a href="{% url 'students:skills_edit' %}" class="btn btn-outline-secondary">Edit Skills</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Stats -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="stat-number">{{ applications|length }}</div>
+            <div class="text-muted small">My Applications</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <div class="stat-number">{{ skills_count|default:0 }}</div>
+            <div class="text-muted small">Skills Listed</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card stat-card">
+            <a href="{% url 'students:browse_internships' %}" class="btn btn-primary w-100 py-3">Browse Internships</a>
+        </div>
+    </div>
+</div>
+
+<!-- My Applications Section -->
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="mb-0">My Applications</h5>
+            <a href="{% url 'students:browse_internships' %}" class="btn btn-sm btn-primary">+ Apply New</a>
+        </div>
+
         {% if applications %}
-            <div class="row">
+            <div class="d-flex flex-column gap-3">
                 {% for app in applications %}
-                <div class="col-md-6 mb-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6>{{ app.internship.title }}</h6>
-                            <p class="text-muted small mb-1">{{ app.internship.company.organization_name }}</p>
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+                            <div>
+                                <h6 class="mb-1">{{ app.internship.title }}</h6>
+                                <p class="text-muted small mb-2">{{ app.internship.company.organization_name }}</p>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
                                 <span class="badge bg-{% if app.status == 'pending' %}warning{% elif app.status == 'offer_issued' %}info{% elif app.status == 'accepted' %}success{% else %}danger{% endif %}">
                                     {{ app.status|title }}
                                 </span>
-                            <span class="badge bg-secondary ms-2">Match: {{ app.match_score }}%</span>
+                                <span class="badge bg-secondary">Match: {{ app.match_score }}%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3">
+                            <span class="small text-muted">Applied: {{ app.applied_at|date:"M d, Y" }}</span>
+                            <div>
+                                {% if app.status == 'pending' %}
+                                    <a href="{% url 'students:withdraw_application' app.id %}" class="btn btn-sm btn-outline-danger" onclick="return confirm('Withdraw this application?')">Withdraw</a>
+                                {% elif app.status == 'offer_issued' %}
+                                    <a href="{% url 'students:view_offer' app.id %}" class="btn btn-sm btn-success">View Offer</a>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
         {% else %}
-            <div class="card p-4 text-center text-muted">
-                No applications yet. <a href="{% url 'students:browse_internships' %}">Browse internships</a>
+            <div class="text-center py-5 text-muted">
+                <p class="mb-3">No applications yet.</p>
+                <a href="{% url 'students:browse_internships' %}" class="btn btn-primary">Browse Internships</a>
             </div>
         {% endif %}
-    </div>
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body">
-                <h6>Quick Links</h6>
-                <a href="{% url 'students:browse_internships' %}" class="btn btn-outline-primary w-100 mb-2">Browse Internships</a>
-                <a href="{% url 'students:profile' %}" class="btn btn-outline-secondary w-100">My Profile</a>
-            </div>
-        </div>
     </div>
 </div>
 {% endblock %}

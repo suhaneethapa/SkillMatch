@@ -4,78 +4,63 @@
 
 {% block content %}
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <h4>My Internship Listings</h4>
+    <h4 class="mb-0">My Internship Listings</h4>
     <a href="{% url 'companies:create_listing' %}" class="btn btn-primary">+ Post New</a>
 </div>
 
 {% if internships %}
-    <div class="row">
+    <div class="d-flex flex-column gap-3">
         {% for i in internships %}
-        <div class="col-md-6 mb-3">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-start">
-                        <h6>{{ i.title }}</h6>
+        <div class="card border-0 shadow-sm">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+                    <div>
+                        <h6 class="mb-1">{{ i.title }}</h6>
                         <span class="badge bg-{% if i.status == 'approved' %}success{% elif i.status == 'closed' %}dark{% else %}warning{% endif %}">
                             {{ i.status|title }}
                         </span>
+                        <span class="badge bg-light text-dark border ms-1">{{ i.category.name }}</span>
                     </div>
-                    
-                    <p class="text-muted small mb-2">{{ i.category.name }}</p>
-                    
-                    <!-- Key Details -->
-                    <div class="d-flex flex-wrap gap-1 mb-2">
-                        <span class="badge bg-light text-dark border">💰 Rs. {{ i.stipend|default:"Unpaid" }}</span>
-                        <span class="badge bg-light text-dark border">📍 {{ i.location_type|title }}</span>
-                        <span class="badge bg-light text-dark border">⏱️ {{ i.expected_duration }}</span>
-                    </div>
-                    
-                    <!-- Positions -->
-                    <p class="small mb-1">
-                        <strong>Positions:</strong> {{ i.total_positions }} total | 
-                        <strong>Remaining:</strong> {{ i.remaining_positions }} | 
-                        <strong>Applied:</strong> {{ i.applications.count }}
-                    </p>
-                    
-                    <!-- Deadline -->
-                    <p class="small mb-2">
-                        <strong>Deadline:</strong> {{ i.deadline }}
-                        {% if i.deadline < today %}
-                            <span class="badge bg-danger">Expired</span>
-                        {% else %}
-                            <span class="badge bg-secondary">{{ i.deadline|timeuntil }} left</span>
-                        {% endif %}
-                    </p>
-                    
-                    <!-- Required Skills -->
-                    <p class="small mb-2">
-                        <strong>Required:</strong>
-                        {% for skill in i.internship_skills.all %}
-                            {% if skill.is_required %}
-                                <span class="badge bg-primary">{{ skill.skill.name }}</span>
-                            {% endif %}
-                        {% empty %}
-                            <span class="text-muted">None specified</span>
-                        {% endfor %}
-                    </p>
-                    
-                    <div class="d-flex gap-2 mt-3">
-                        <a href="{% url 'companies:view_applicants' i.id %}" class="btn btn-outline-primary btn-sm">
-                            View Applicants ({{ i.applications.count }})
-                        </a>
-                        {% if i.status == 'approved' and i.deadline >= today %}
-                            <a href="#" class="btn btn-outline-secondary btn-sm">Edit</a>
-                        {% endif %}
-                        <a href="{% url 'companies:delete_listing' i.id %}" class="btn btn-outline-danger btn-sm">Delete</a>
-                    </div>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mb-3">
+                    <span class="badge bg-light text-dark border">💰 Rs. {{ i.stipend|default:"Unpaid" }}</span>
+                    <span class="badge bg-light text-dark border">📍 {{ i.location_type|title }}</span>
+                    <span class="badge bg-light text-dark border">⏱️ {{ i.expected_duration }}</span>
+                </div>
+
+                <p class="small mb-2">
+                    <strong>Positions:</strong> {{ i.total_positions }} total | 
+                    <strong>Remaining:</strong> {{ i.remaining_positions }} | 
+                    <strong>Applied:</strong> {{ i.applications.count }}
+                </p>
+
+                <p class="small mb-3">
+                    <strong>Deadline:</strong> {{ i.deadline }}
+                    {% if i.deadline < today %}
+                        <span class="badge bg-danger">Expired</span>
+                    {% else %}
+                        <span class="badge bg-secondary">{{ i.deadline|timeuntil }} left</span>
+                    {% endif %}
+                </p>
+
+                <div class="d-flex gap-2">
+                    <a href="{% url 'companies:view_applicants' i.id %}" class="btn btn-outline-primary btn-sm">
+                        View Applicants ({{ i.applications.count }})
+                    </a>
+                    {% if i.status == 'approved' and i.deadline >= today %}
+                        <a href="#" class="btn btn-outline-secondary btn-sm">Edit</a>
+                    {% endif %}
+                    <a href="{% url 'companies:delete_listing' i.id %}" class="btn btn-outline-danger btn-sm">Delete</a>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
 {% else %}
-    <div class="card p-4 text-center text-muted">
-        No listings posted yet. <a href="{% url 'companies:create_listing' %}">Create one now</a>.
+    <div class="card p-5 text-center text-muted">
+        <p class="mb-3">No listings posted yet.</p>
+        <a href="{% url 'companies:create_listing' %}" class="btn btn-primary">Create one now</a>
     </div>
 {% endif %}
 {% endblock %}

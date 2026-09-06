@@ -3,88 +3,95 @@
 {% block title %}Browse Internships - SkillMatch{% endblock %}
 
 {% block content %}
-<h4 class="mb-4">Available Internships <span class="text-muted small">(Ranked by Match Score)</span></h4>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h4 class="mb-0">Available Internships</h4>
+    <span class="text-muted small">Ranked by your match score</span>
+</div>
 
-<div class="row">
+<div class="d-flex flex-column gap-3">
     {% for item in listings %}
-    <div class="col-md-6 col-lg-4 mb-4">
-        <div class="card h-100">
-            <div class="card-body">
-                <!-- Title + Match Score -->
-                <div class="d-flex justify-content-between align-items-start mb-2">
-                    <h6 class="card-title mb-0">{{ item.internship.title }}</h6>
-                    <span class="match-badge badge {% if item.score >= 70 %}match-high{% elif item.score >= 50 %}match-mid{% else %}match-low{% endif %} rounded-pill">
-                        {{ item.score }}%
-                    </span>
-                </div>
-                
-                <!-- Company -->
-                <p class="text-muted small mb-2">
-                    {% if item.internship.company.logo %}
-                        <img src="{{ item.internship.company.logo.url }}" style="height: 16px; width: 16px; border-radius: 50%;" alt="">
-                    {% endif %}
-                    {{ item.internship.company.organization_name }}
-                </p>
-                
-                <!-- Description -->
-                <p class="small mb-2">{{ item.internship.description|truncatewords:12 }}</p>
-                
-                <!-- Key Details Row -->
-                <div class="d-flex flex-wrap gap-1 mb-2">
-                    <span class="badge bg-light text-dark border">
-                        Rs. {{ item.internship.stipend|default:"Unpaid" }}
-                    </span>
-                    <span class="badge bg-light text-dark border">
-                        {{ item.internship.location_type|title }}
-                    </span>
-                    <span class="badge bg-light text-dark border">
-                        {{ item.internship.expected_duration }}
-                    </span>
-                    <span class="badge bg-light text-dark border">
-                        {{ item.internship.total_positions }} slot{{ item.internship.total_positions|pluralize }}
-                    </span>
-                </div>
-                
-                <!-- Deadline + Days Left -->
-                <div class="mb-2">
-                    {% with days_left=item.internship.deadline|timeuntil:today %}
-                        {% if item.internship.deadline < today %}
-                            <span class="badge bg-danger">Expired {{ item.internship.deadline|timesince }} ago</span>
-                        {% elif days_left == "0 minutes" %}
-                            <span class="badge bg-danger">Deadline: Today!</span>
-                        {% else %}
-                            <span class="badge bg-secondary">Closes in {{ days_left }}</span>
+    <div class="card border-0 shadow-sm">
+        <div class="card-body">
+            <!-- Header: Title + Match Score -->
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+                <div>
+                    <h5 class="card-title mb-1">{{ item.internship.title }}</h5>
+                    <p class="text-muted small mb-0">
+                        {% if item.internship.company.logo %}
+                            <img src="{{ item.internship.company.logo.url }}" style="height: 18px; width: 18px; border-radius: 50%;" alt="">
                         {% endif %}
-                    {% endwith %}
-                    <span class="small text-muted">(Deadline: {{ item.internship.deadline }})</span>
-                </div>
-                
-                <!-- Skills Gap -->
-                {% if item.gap %}
-                    <p class="small text-danger mb-2">
-                        <strong>Missing:</strong> {{ item.gap|join:", " }}
+                        {{ item.internship.company.organization_name }}
                     </p>
-                {% endif %}
-                
-                <!-- Action -->
-                <div class="d-flex justify-content-between align-items-center mt-3">
-                    {% if item.internship.deadline < today %}
-                        <span class="badge bg-secondary">Closed</span>
-                    {% elif item.eligible %}
-                        <form method="post" action="{% url 'students:apply_internship' item.internship.id %}" class="d-inline">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-primary btn-sm">Apply Now</button>
-                        </form>
-                    {% else %}
-                        <span class="badge bg-secondary">Need 50% Match</span>
-                    {% endif %}
                 </div>
+                <span class="match-badge badge {% if item.score >= 70 %}match-high{% elif item.score >= 50 %}match-mid{% else %}match-low{% endif %} rounded-pill fs-6 px-3 py-2">
+                    {{ item.score }}% Match
+                </span>
+            </div>
+
+            <!-- Description -->
+            <p class="mb-3">{{ item.internship.description|truncatewords:20 }}</p>
+
+            <!-- Details Row -->
+            <div class="d-flex flex-wrap gap-2 mb-3">
+                <span class="badge bg-light text-dark border">💰 Rs. {{ item.internship.stipend|default:"Unpaid" }}</span>
+                <span class="badge bg-light text-dark border">📍 {{ item.internship.location_type|title }}</span>
+                <span class="badge bg-light text-dark border">⏱️ {{ item.internship.expected_duration }}</span>
+                <span class="badge bg-light text-dark border">👥 {{ item.internship.total_positions }} slot{{ item.internship.total_positions|pluralize }}</span>
+                <span class="badge bg-light text-dark border">📁 {{ item.internship.category.name }}</span>
+            </div>
+
+            <!-- Deadline -->
+            <div class="mb-3">
+                {% if item.internship.deadline < today %}
+                    <span class="badge bg-danger">Expired {{ item.internship.deadline|timesince }} ago</span>
+                {% else %}
+                    <span class="badge bg-secondary">Closes in {{ item.internship.deadline|timeuntil }}</span>
+                {% endif %}
+                <span class="small text-muted ms-2">(Deadline: {{ item.internship.deadline }})</span>
+            </div>
+
+            <!-- Skills -->
+            <div class="mb-3">
+                <strong class="small">Required Skills:</strong>
+                <div class="d-flex flex-wrap gap-1 mt-1">
+                    {% for skill in item.internship.internship_skills.all %}
+                        {% if skill.is_required %}
+                            <span class="badge bg-primary">{{ skill.skill.name }}</span>
+                        {% else %}
+                            <span class="badge bg-secondary">{{ skill.skill.name }}</span>
+                        {% endif %}
+                    {% empty %}
+                        <span class="text-muted small">None specified</span>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Gap Warning -->
+            {% if item.gap %}
+                <div class="alert alert-warning py-2 small mb-3">
+                    <strong>Missing skills:</strong> {{ item.gap|join:", " }}
+                </div>
+            {% endif %}
+
+            <!-- Action -->
+            <div class="d-flex justify-content-end">
+                {% if item.internship.deadline < today %}
+                    <span class="badge bg-secondary px-3 py-2">Closed</span>
+                {% elif item.eligible %}
+                    <form method="post" action="{% url 'students:apply_internship' item.internship.id %}" class="d-inline">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary px-4">Apply Now</button>
+                    </form>
+                {% else %}
+                    <span class="badge bg-secondary px-3 py-2">Need 50% Match</span>
+                {% endif %}
             </div>
         </div>
     </div>
     {% empty %}
-    <div class="col-12">
-        <div class="card p-4 text-center text-muted">No internships available.</div>
+    <div class="card p-5 text-center text-muted">
+        <h5>No internships available right now.</h5>
+        <p>Check back later for new listings.</p>
     </div>
     {% endfor %}
 </div>

@@ -3,63 +3,88 @@
 {% block title %}Company Dashboard - SkillMatch{% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-8">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4>My Internships</h4>
-            <a href="{% url 'companies:create_listing' %}" class="btn btn-primary">+ Post New Internship</a>
+<!-- Company Header -->
+<div class="card mb-4">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-3">
+                {% if profile.logo %}
+                    <img src="{{ profile.logo.url }}" alt="Logo" class="rounded" style="height: 60px; width: 60px; object-fit: cover;">
+                {% else %}
+                    <div class="bg-primary text-white rounded d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; font-size: 1.5rem;">
+                        🏢
+                    </div>
+                {% endif %}
+                <div>
+                    <h5 class="mb-1">{{ profile.organization_name }}</h5>
+                    <p class="text-muted mb-0 small">{{ profile.industry }} · {{ profile.hq_location }}</p>
+                </div>
+            </div>
+            <div class="d-flex gap-2">
+                <a href="{% url 'companies:profile' %}" class="btn btn-outline-secondary">View Profile</a>
+                <a href="{% url 'companies:create_listing' %}" class="btn btn-primary">+ Post New Internship</a>
+            </div>
         </div>
-        
+    </div>
+</div>
+
+<!-- My Internships Section -->
+<div class="card">
+    <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="mb-0">My Internship Listings</h5>
+            <a href="{% url 'companies:create_listing' %}" class="btn btn-sm btn-primary">+ Post New</a>
+        </div>
+
         {% if internships %}
-            <div class="row">
+            <div class="d-flex flex-column gap-3">
                 {% for internship in internships %}
-                <div class="col-md-6 mb-3">
-                    <div class="card">
-                        <div class="card-body">
-                            <h6>{{ internship.title }}</h6>
-                            <p class="text-muted small mb-1">
-                                Status: <span class="badge bg-{% if internship.status == 'approved' %}success{% elif internship.status == 'closed' %}dark{% else %}warning{% endif %}">{{ internship.status|title }}</span>
-                            </p>
-                            <div class="d-flex flex-wrap gap-1 mb-2">
-                                <span class="badge bg-light text-dark border">Rs. {{ internship.stipend|default:"Unpaid" }}</span>
-                                <span class="badge bg-light text-dark border">{{ internship.location_type|title }}</span>
-                                <span class="badge bg-light text-dark border">{{ internship.expected_duration }}</span>
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+                            <div>
+                                <h6 class="mb-1">{{ internship.title }}</h6>
+                                <span class="badge bg-{% if internship.status == 'approved' %}success{% elif internship.status == 'closed' %}dark{% else %}warning{% endif %}">
+                                    {{ internship.status|title }}
+                                </span>
+                                <span class="badge bg-light text-dark border ms-1">{{ internship.category.name }}</span>
                             </div>
-                            <p class="small mb-1">
-                                <strong>Positions:</strong> {{ internship.total_positions }} total | 
-                                <strong>Remaining:</strong> {{ internship.remaining_positions }} | 
-                                <strong>Applicants:</strong> {{ internship.applications.count }}
-                            </p>
-                            <p class="small mb-2">
-                        <strong>Deadline:</strong> {{ internship.deadline }}
-                        {% if internship.deadline < today %}
-                            <span class="badge bg-danger">Expired</span>
-                        {% else %}
-                            <span class="badge bg-secondary">{{ internship.deadline|timeuntil }} left</span>
-                        {% endif %}
-                    </p>
-                            <a href="{% url 'companies:view_applicants' internship.id %}" class="btn btn-outline-primary btn-sm">View Applicants</a>
-<a href="{% url 'companies:delete_listing' internship.id %}" class="btn btn-outline-danger btn-sm">Delete</a>
+                            <div class="text-end">
+                                <span class="badge bg-primary">{{ internship.applications.count }} Applicant{{ internship.applications.count|pluralize }}</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex flex-wrap gap-2 mb-3">
+                            <span class="badge bg-light text-dark border">💰 Rs. {{ internship.stipend|default:"Unpaid" }}</span>
+                            <span class="badge bg-light text-dark border">📍 {{ internship.location_type|title }}</span>
+                            <span class="badge bg-light text-dark border">⏱️ {{ internship.expected_duration }}</span>
+                            <span class="badge bg-light text-dark border">👥 {{ internship.total_positions }} slot{{ internship.total_positions|pluralize }} ({{ internship.remaining_positions }} left)</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                            <div class="small text-muted">
+                                <strong>Deadline:</strong> {{ internship.deadline }}
+                                {% if internship.deadline < today %}
+                                    <span class="badge bg-danger ms-1">Expired</span>
+                                {% else %}
+                                    <span class="badge bg-secondary ms-1">{{ internship.deadline|timeuntil }} left</span>
+                                {% endif %}
+                            </div>
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'companies:view_applicants' internship.id %}" class="btn btn-sm btn-outline-primary">View Applicants</a>
+                                <a href="{% url 'companies:delete_listing' internship.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                            </div>
                         </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
         {% else %}
-            <div class="card p-4 text-center text-muted">
-                No internships posted yet. <a href="{% url 'companies:create_listing' %}">Create one now</a>.
+            <div class="text-center py-5 text-muted">
+                <p class="mb-3">No internships posted yet.</p>
+                <a href="{% url 'companies:create_listing' %}" class="btn btn-primary">Create Your First Listing</a>
             </div>
         {% endif %}
-    </div>
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-body">
-                <h6>{{ profile.organization_name }}</h6>
-                <p class="text-muted small">{{ profile.industry }}</p>
-                <p class="small">{{ profile.description|truncatewords:20 }}</p>
-                <a href="{% url 'companies:profile' %}" class="btn btn-outline-secondary btn-sm w-100">Edit Profile</a>
-            </div>
-        </div>
     </div>
 </div>
 {% endblock %}

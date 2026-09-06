@@ -16,7 +16,8 @@ def dashboard(request):
     internships = profile.internships.all()
     return render(request, 'companies/dashboard.html', {
         'internships': internships,
-        'profile': profile
+        'profile': profile,
+        'today': date.today(),
     })
 
 
@@ -26,11 +27,8 @@ def profile(request):
         return redirect('accounts:home')
     
     profile = request.user.company_profile
-    internships = profile.internships.all()
-    return render(request, 'companies/dashboard.html', {
-        'internships': internships,
+    return render(request, 'companies/profile.html', {
         'profile': profile,
-        'today': date.today(),
     })
 
 
@@ -49,16 +47,13 @@ def profile_edit(request):
         profile.website_url = request.POST.get('website_url', '')
         profile.hq_location = request.POST.get('hq_location', profile.hq_location)
         
-        # Handle logo upload with validation
         if request.FILES.get('logo'):
             logo = request.FILES['logo']
             
-            # Check file size (max 2MB)
             if logo.size > 2 * 1024 * 1024:
                 messages.error(request, 'Logo file too large. Maximum size is 2MB.')
                 return redirect('companies:profile_edit')
             
-            # Check file type
             if not logo.content_type.startswith('image/'):
                 messages.error(request, 'Only image files (PNG, JPG, GIF) are allowed for logo.')
                 return redirect('companies:profile_edit')

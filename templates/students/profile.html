@@ -3,7 +3,7 @@
 {% block title %}My Profile - SkillMatch{% endblock %}
 
 {% block content %}
-<div class="row">
+<div class="row justify-content-center">
     <div class="col-md-8">
         <div class="card mb-4">
             <div class="card-body">
@@ -15,9 +15,9 @@
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <p class="mb-1"><strong>Email:</strong> {{ request.user.email }}</p>
-                        <p class="mb-1"><strong>College:</strong> {{ profile.college.name }}</p>
-                        <p class="mb-1"><strong>Department:</strong> {{ profile.department }}</p>
-                        <p class="mb-1"><strong>Semester:</strong> {{ profile.semester }}</p>
+                        <p class="mb-1"><strong>College:</strong> {{ profile.college.name|default:"Not set" }}</p>
+                        <p class="mb-1"><strong>Department:</strong> {{ profile.department|default:"Not set" }}</p>
+                        <p class="mb-1"><strong>Semester:</strong> {{ profile.semester|default:"Not set" }}</p>
                     </div>
                     <div class="col-md-6">
                         {% if profile.github_url %}
@@ -38,12 +38,12 @@
                 
                 {% if profile.cv_file %}
                     <div class="alert alert-success d-flex justify-content-between align-items-center">
-                        <span>✅ CV uploaded</span>
+                        <span>CV uploaded</span>
                         <a href="{{ profile.cv_file.url }}" target="_blank" class="btn btn-sm btn-outline-primary">View CV</a>
                     </div>
                 {% else %}
                     <div class="alert alert-warning">
-                        ⚠️ No CV uploaded. <a href="{% url 'students:profile_edit' %}">Upload now</a>
+                        No CV uploaded. <a href="{% url 'students:profile_edit' %}">Upload now</a>
                     </div>
                 {% endif %}
             </div>
@@ -65,22 +65,6 @@
                     <p class="text-muted">No skills added yet. <a href="{% url 'students:skills_edit' %}">Add skills</a></p>
                 {% endif %}
             </div>
-        </div>
-    </div>
-    
-    <div class="col-md-4">
-        <div class="card mb-3">
-            <div class="card-body text-center">
-                <div class="bg-light rounded-circle mx-auto mb-3" style="width: 80px; height: 80px; display: flex; align-items: center; justify-content: center; font-size: 2rem;">
-                    👤
-                </div>
-                <h6>{{ request.user.email }}</h6>
-                <span class="badge bg-info">Student</span>
-            </div>
-        </div>
-        <div class="d-grid gap-2">
-            <a href="{% url 'students:browse_internships' %}" class="btn btn-outline-primary">Browse Internships</a>
-            <a href="{% url 'students:my_applications' %}" class="btn btn-outline-secondary">My Applications</a>
         </div>
     </div>
 </div>
