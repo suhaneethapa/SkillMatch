@@ -10,8 +10,11 @@
         body { background: #f8f9fa; }
         .navbar { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
         .navbar-brand { font-weight: 700; color: white !important; }
-        .navbar .nav-link { color: rgba(255,255,255,0.9) !important; }
+        .navbar .nav-link { color: rgba(255,255,255,0.85) !important; padding: 0.5rem 1rem !important; transition: color 0.2s; }
         .navbar .nav-link:hover { color: white !important; }
+        .nav-divider { color: rgba(255,255,255,0.3); padding: 0 0.25rem; user-select: none; }
+        .nav-logout { border-left: 1px solid rgba(255,255,255,0.25); margin-left: 0.5rem; padding-left: 1rem !important; }
+        .nav-logout:hover { color: #ffcdd2 !important; }
         .card { border: none; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
         .btn-primary { background: var(--primary); border-color: var(--primary); }
         .btn-primary:hover { background: var(--secondary); border-color: var(--secondary); }
@@ -37,22 +40,27 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-center">
                     {% if user.is_authenticated %}
-                       {% if user.role == 'student' %}
-    <li class="nav-item"><a class="nav-link" href="{% url 'students:dashboard' %}">Dashboard</a></li>
-    <li class="nav-item"><a class="nav-link" href="{% url 'students:profile' %}">Profile</a></li>
-    <li class="nav-item"><a class="nav-link" href="{% url 'students:browse_internships' %}">Browse</a></li>
+                        {% if user.role == 'student' %}
+                            <li class="nav-item"><a class="nav-link" href="{% url 'students:dashboard' %}">Dashboard</a></li>
+                            <li class="nav-item nav-divider d-none d-lg-block">|</li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'students:profile' %}">Profile</a></li>
+                            <li class="nav-item nav-divider d-none d-lg-block">|</li>
+                            <li class="nav-item"><a class="nav-link" href="{% url 'students:browse_internships' %}">Browse</a></li>
                         {% elif user.role == 'company' %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'companies:dashboard' %}">Dashboard</a></li>
+                            <li class="nav-item nav-divider d-none d-lg-block">|</li>
                             <li class="nav-item"><a class="nav-link" href="{% url 'companies:my_listings' %}">My Listings</a></li>
+                            <li class="nav-item nav-divider d-none d-lg-block">|</li>
                             <li class="nav-item"><a class="nav-link" href="{% url 'companies:create_listing' %}">Post Internship</a></li>
                         {% elif user.is_superuser %}
                             <li class="nav-item"><a class="nav-link" href="{% url 'admin_panel:dashboard' %}">Admin</a></li>
                         {% endif %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'accounts:logout' %}">Logout ({{ user.email }})</a></li>
+                        <li class="nav-item nav-logout"><a class="nav-link" href="{% url 'accounts:logout' %}">Logout</a></li>
                     {% else %}
                         <li class="nav-item"><a class="nav-link" href="{% url 'accounts:login' %}">Login</a></li>
+                        <li class="nav-item nav-divider d-none d-lg-block">|</li>
                         <li class="nav-item"><a class="nav-link" href="{% url 'accounts:register' %}">Register</a></li>
                     {% endif %}
                 </ul>
