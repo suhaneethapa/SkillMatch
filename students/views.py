@@ -13,9 +13,11 @@ from matching.engine import compute_match_score, is_eligible
 def dashboard(request):
     if request.user.role != 'student':
         return redirect('accounts:home')
-    applications = request.user.applications.select_related('internship__company').all()
+    applications = request.user.applications.select_related('internship__company').order_by('-applied_at')
+    skills_count = request.user.student_skills.count()
     return render(request, 'students/dashboard.html', {
-        'applications': applications
+        'applications': applications,
+        'skills_count': skills_count,
     })
 
 
@@ -117,12 +119,10 @@ def browse_internships(request):
 
 @login_required
 def my_applications(request):
+    """Redirect to dashboard — applications are shown there now."""
     if request.user.role != 'student':
         return redirect('accounts:home')
-    applications = request.user.applications.select_related('internship__company').order_by('-applied_at')
-    return render(request, 'students/applications.html', {
-        'applications': applications
-    })
+    return redirect('students:dashboard')
 
 
 @login_required
@@ -157,7 +157,7 @@ def apply_internship(request, internship_id):
     )
     
     messages.success(request, f"Application submitted! Match score: {score}%")
-    return redirect('students:my_applications')
+    return redirect('students:dashboard')
 
 
 @login_required
@@ -169,7 +169,8 @@ def withdraw_application(request, application_id):
     application.status = 'withdrawn'
     application.save()
     messages.success(request, 'Application withdrawn successfully.')
-    return redirect('students:my_applications')
+    return redirect('students:dashboard')
+
 
 @login_required
 def view_offer(request, application_id):
@@ -191,7 +192,6 @@ def accept_offer(request, application_id):
     application.status = 'accepted'
     application.save()
     
-    # Auto-close if positions filled
     internship = application.internship
     accepted_count = internship.applications.filter(status='accepted').count()
     if accepted_count >= internship.total_positions:
@@ -201,7 +201,7 @@ def accept_offer(request, application_id):
         messages.info(request, "This internship is now closed as all positions have been filled.")
     
     messages.success(request, "Congratulations! You have accepted the offer.")
-    return redirect('students:my_applications')
+    return redirect('students:dashboard')
 
 
 @login_required
@@ -213,4 +213,4 @@ def decline_offer(request, application_id):
     application.status = 'rejected'
     application.save()
     messages.success(request, "Offer declined. The company may contact other candidates.")
-    return redirect('students:my_applications')
+    return redirect('students:dashboard')

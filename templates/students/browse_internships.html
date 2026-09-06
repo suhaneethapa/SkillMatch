@@ -33,11 +33,11 @@
 
             <!-- Details Row -->
             <div class="d-flex flex-wrap gap-2 mb-3">
-                <span class="badge bg-light text-dark border">💰 Rs. {{ item.internship.stipend|default:"Unpaid" }}</span>
-                <span class="badge bg-light text-dark border">📍 {{ item.internship.location_type|title }}</span>
-                <span class="badge bg-light text-dark border">⏱️ {{ item.internship.expected_duration }}</span>
-                <span class="badge bg-light text-dark border">👥 {{ item.internship.total_positions }} slot{{ item.internship.total_positions|pluralize }}</span>
-                <span class="badge bg-light text-dark border">📁 {{ item.internship.category.name }}</span>
+                <span class="badge bg-light text-dark border">Rs. {{ item.internship.stipend|default:"Unpaid" }}</span>
+                <span class="badge bg-light text-dark border">{{ item.internship.location_type|title }}</span>
+                <span class="badge bg-light text-dark border">{{ item.internship.expected_duration }}</span>
+                <span class="badge bg-light text-dark border">{{ item.internship.total_positions }} slot{{ item.internship.total_positions|pluralize }}</span>
+                <span class="badge bg-light text-dark border">{{ item.internship.category.name }}</span>
             </div>
 
             <!-- Deadline -->

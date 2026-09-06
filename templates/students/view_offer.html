@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block title %}View Offer - SkillMatch{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4 class="mb-3">Offer Letter Received</h4>
+                <p class="text-muted">
+                    From: <strong>{{ application.internship.company.organization_name }}</strong><br>
+                    Position: <strong>{{ application.internship.title }}</strong><br>
+                    Match Score: <span class="badge match-high">{{ application.match_score }}%</span>
+                </p>
+                
+                {% if application.offer_letter %}
+                    <div class="alert alert-light border mb-3">
+                        <p class="mb-2"><strong>Offer Letter:</strong></p>
+                        <a href="{{ application.offer_letter.url }}" target="_blank" class="btn btn-outline-primary">
+                            View Offer Letter PDF
+                        </a>
+                    </div>
+                {% else %}
+                    <div class="alert alert-warning">
+                        No offer letter uploaded yet. Contact the company for details.
+                    </div>
+                {% endif %}
+                
+                <div class="d-flex gap-2">
+                    <a href="{% url 'students:accept_offer' application.id %}" class="btn btn-success" onclick="return confirm('Accept this offer? This will confirm your placement.')">Accept Offer</a>
+                    <a href="{% url 'students:decline_offer' application.id %}" class="btn btn-outline-danger" onclick="return confirm('Decline this offer? This cannot be undone.')">Decline</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
