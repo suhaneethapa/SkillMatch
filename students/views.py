@@ -13,9 +13,11 @@ from matching.engine import compute_match_score, is_eligible
 def dashboard(request):
     if request.user.role != 'student':
         return redirect('accounts:home')
+    profile = request.user.student_profile  # <-- ADD THIS LINE
     applications = request.user.applications.select_related('internship__company').order_by('-applied_at')
     skills_count = request.user.student_skills.count()
     return render(request, 'students/dashboard.html', {
+        'profile': profile,  # <-- ADD THIS LINE
         'applications': applications,
         'skills_count': skills_count,
     })
