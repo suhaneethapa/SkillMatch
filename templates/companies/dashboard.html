@@ -3,75 +3,92 @@
 {% block title %}Company Dashboard - SkillMatch{% endblock %}
 
 {% block content %}
-<div class="card mb-3">
-    <div class="card-body p-3">
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-            <div class="d-flex align-items-center gap-2">
-                {% if profile.logo %}
-                    <img src="{{ profile.logo.url }}" alt="Logo" class="rounded" style="height: 40px; width: 40px; object-fit: cover;">
-                {% else %}
-                    <div class="bg-primary text-white rounded d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; font-size: 1rem;">🏢</div>
-                {% endif %}
-                <div>
-                    <h6 class="mb-0 fw-bold">{{ profile.organization_name }}</h6>
-                    <small class="text-muted">{{ profile.industry }} · {{ profile.hq_location }}</small>
-                </div>
-            </div>
-            <div class="d-flex gap-2">
-                <a href="{% url 'companies:profile' %}" class="btn btn-outline-secondary btn-sm">Profile</a>
-                <a href="{% url 'companies:create_listing' %}" class="btn btn-primary btn-sm">+ Post</a>
-            </div>
+<div class="internship-page">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0 fw-bold" style="color: #1f2937;">{{ profile.organization_name }}</h4>
+        <div class="d-flex gap-2">
+            <a href="{% url 'companies:profile' %}" class="btn btn-outline-secondary btn-sm-action">Profile</a>
+            <a href="{% url 'companies:create_listing' %}" class="btn btn-primary btn-sm-action">+ Post</a>
         </div>
     </div>
-</div>
 
-<div class="card">
-    <div class="card-body p-3">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="mb-0 fw-bold">My Listings</h6>
-            <a href="{% url 'companies:create_listing' %}" class="btn btn-sm btn-primary">+ New</a>
-        </div>
-
-        {% if internships %}
-            <div class="d-flex flex-column gap-2">
-                {% for internship in internships %}
-                <div class="card">
-                    <div class="card-body p-3">
-                        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-1">
-                            <div>
-                                <h6 class="mb-0 fw-bold">{{ internship.title }}</h6>
-                                <span class="badge bg-{% if internship.status == 'approved' %}success{% elif internship.status == 'closed' %}dark{% else %}warning{% endif %}">{{ internship.status|title }}</span>
-                                <span class="badge bg-light text-dark border">{{ internship.category.name }}</span>
-                            </div>
-                            <span class="badge bg-primary">{{ internship.applications.count }} applicant{{ internship.applications.count|pluralize }}</span>
-                        </div>
-
-                        <div class="d-flex flex-wrap gap-1 mb-2">
-                            <span class="badge bg-light text-dark border">Rs. {{ internship.stipend|default:"Unpaid" }}</span>
-                            <span class="badge bg-light text-dark border">{{ internship.location_type|title }}</span>
-                            <span class="badge bg-light text-dark border">{{ internship.expected_duration }}</span>
-                            <span class="badge bg-light text-dark border">{{ internship.remaining_positions }}/{{ internship.total_positions }} left</span>
-                            {% if internship.deadline < today %}
-                                <span class="badge bg-danger">Expired</span>
-                            {% else %}
-                                <span class="badge bg-secondary">{{ internship.deadline|timeuntil }} left</span>
-                            {% endif %}
-                        </div>
-
-                        <div class="d-flex gap-2">
-                            <a href="{% url 'companies:view_applicants' internship.id %}" class="btn btn-sm btn-outline-primary">Applicants</a>
-                            <a href="{% url 'companies:delete_listing' internship.id %}" class="btn btn-sm btn-outline-danger">Delete</a>
-                        </div>
-                    </div>
+    <!-- Internship Grid -->
+    <div class="internship-grid">
+        {% for internship in internships %}
+        <div class="internship-card">
+            <!-- Title + Status -->
+            <div class="card-header-row">
+                <div style="min-width: 0;">
+                    <div class="card-title-text">{{ internship.title }}</div>
                 </div>
+                <span class="match-pill
+                    {% if internship.status == 'approved' %}match-high
+                    {% elif internship.status == 'closed' %}match-low
+                    {% else %}match-mid{% endif %}">
+                    {{ internship.status|title }}
+                </span>
+            </div>
+
+            <!-- Category -->
+            <div class="card-company">
+                {{ internship.category.name }}
+            </div>
+
+            <!-- Description (clamped to 2 lines) -->
+            <div class="card-desc">{{ internship.description }}</div>
+
+            <!-- Skills -->
+            <div class="skills-row">
+                {% for skill in internship.internship_skills.all %}
+                    <span class="skill-tag {% if skill.is_required %}req{% else %}pref{% endif %}">
+                        {{ skill.skill.name }}
+                    </span>
+                {% empty %}
+                    <span class="text-muted" style="font-size: 0.78rem;">No skills specified</span>
                 {% endfor %}
             </div>
-        {% else %}
-            <div class="text-center py-4 text-muted">
-                <p class="mb-2">No listings yet.</p>
-                <a href="{% url 'companies:create_listing' %}" class="btn btn-primary btn-sm">Create First Listing</a>
+
+            <!-- Metadata -->
+            <div class="meta-row">
+                <span>Rs. {{ internship.stipend|default:"Unpaid" }}</span>
+                <span>{{ internship.location_type|title }}</span>
+                <span>{{ internship.expected_duration }}</span>
+                <span>{{ internship.applications.count }} applicant{{ internship.applications.count|pluralize }}</span>
             </div>
-        {% endif %}
+
+            <!-- Positions left -->
+            <div class="match-status {% if internship.remaining_positions > 0 %}matched{% else %}missing{% endif %}">
+                {% if internship.remaining_positions > 0 %}
+                    {{ internship.remaining_positions }} of {{ internship.total_positions }} positions remaining
+                {% else %}
+                    All positions filled
+                {% endif %}
+            </div>
+
+            <!-- Footer: Deadline + Actions -->
+            <div class="card-footer-row">
+                <span class="deadline-text {% if internship.deadline < today %}urgent{% endif %}">
+                    {% if internship.deadline < today %}
+                        Expired {{ internship.deadline|timesince }} ago
+                    {% else %}
+                        {{ internship.deadline|timeuntil }} left
+                    {% endif %}
+                </span>
+
+                <div class="d-flex gap-2">
+                    <a href="{% url 'companies:view_applicants' internship.id %}" class="btn btn-primary btn-apply">Applicants</a>
+                    <a href="{% url 'companies:delete_listing' internship.id %}" class="btn btn-outline-danger btn-apply">Delete</a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="internship-card" style="grid-column: 1 / -1; text-align: center; padding: 48px;">
+            <h5 class="text-muted mb-2">No listings posted yet.</h5>
+            <p class="text-muted small mb-3">Create your first internship listing to start receiving applicants.</p>
+            <a href="{% url 'companies:create_listing' %}" class="btn btn-primary">Post Internship</a>
+        </div>
+        {% endfor %}
     </div>
 </div>
 {% endblock %}

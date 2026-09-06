@@ -3,64 +3,89 @@
 {% block title %}My Listings - SkillMatch{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h4 class="mb-0">My Listings</h4>
-    <a href="{% url 'companies:create_listing' %}" class="btn btn-primary btn-sm">+ Post New</a>
-</div>
+<div class="internship-page">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="mb-0 fw-bold" style="color: #1f2937;">My Listings</h4>
+        <a href="{% url 'companies:create_listing' %}" class="btn btn-primary btn-sm-action">+ Post New</a>
+    </div>
 
-{% if internships %}
-    <div class="d-flex flex-column gap-3">
+    <!-- Internship Grid -->
+    <div class="internship-grid">
         {% for i in internships %}
-        <div class="card border-0 shadow-sm">
-            <div class="card-body">
-                <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
-                    <div>
-                        <h6 class="mb-1">{{ i.title }}</h6>
-                        <span class="badge bg-{% if i.status == 'approved' %}success{% elif i.status == 'closed' %}dark{% else %}warning{% endif %}">
-                            {{ i.status|title }}
-                        </span>
-                        <span class="badge bg-light text-dark border ms-1">{{ i.category.name }}</span>
-                    </div>
+        <div class="internship-card">
+            <!-- Title + Status -->
+            <div class="card-header-row">
+                <div style="min-width: 0;">
+                    <div class="card-title-text">{{ i.title }}</div>
                 </div>
+                <span class="match-pill
+                    {% if i.status == 'approved' %}match-high
+                    {% elif i.status == 'closed' %}match-low
+                    {% else %}match-mid{% endif %}">
+                    {{ i.status|title }}
+                </span>
+            </div>
 
-                <div class="d-flex flex-wrap gap-2 mb-3">
-                    <span class="badge bg-light text-dark border">Rs. {{ i.stipend|default:"Unpaid" }}</span>
-                    <span class="badge bg-light text-dark border">{{ i.location_type|title }}</span>
-                    <span class="badge bg-light text-dark border">{{ i.expected_duration }}</span>
-                </div>
+            <!-- Category -->
+            <div class="card-company">
+                {{ i.category.name }}
+            </div>
 
-                <p class="small mb-2">
-                    <strong>Positions:</strong> {{ i.total_positions }} total | 
-                    <strong>Remaining:</strong> {{ i.remaining_positions }} | 
-                    <strong>Applied:</strong> {{ i.applications.count }}
-                </p>
+            <!-- Description (clamped to 2 lines) -->
+            <div class="card-desc">{{ i.description }}</div>
 
-                <p class="small mb-3">
-                    <strong>Deadline:</strong> {{ i.deadline }}
+            <!-- Skills -->
+            <div class="skills-row">
+                {% for skill in i.internship_skills.all %}
+                    <span class="skill-tag {% if skill.is_required %}req{% else %}pref{% endif %}">
+                        {{ skill.skill.name }}
+                    </span>
+                {% empty %}
+                    <span class="text-muted" style="font-size: 0.78rem;">No skills specified</span>
+                {% endfor %}
+            </div>
+
+            <!-- Metadata -->
+            <div class="meta-row">
+                <span>Rs. {{ i.stipend|default:"Unpaid" }}</span>
+                <span>{{ i.location_type|title }}</span>
+                <span>{{ i.expected_duration }}</span>
+                <span>{{ i.applications.count }} applicant{{ i.applications.count|pluralize }}</span>
+            </div>
+
+            <!-- Positions left -->
+            <div class="match-status {% if i.remaining_positions > 0 %}matched{% else %}missing{% endif %}">
+                {% if i.remaining_positions > 0 %}
+                    {{ i.remaining_positions }} of {{ i.total_positions }} positions remaining
+                {% else %}
+                    All positions filled
+                {% endif %}
+            </div>
+
+            <!-- Footer: Deadline + Actions -->
+            <div class="card-footer-row">
+                <span class="deadline-text {% if i.deadline < today %}urgent{% endif %}">
                     {% if i.deadline < today %}
-                        <span class="badge bg-danger">Expired</span>
+                        Expired {{ i.deadline|timesince }} ago
                     {% else %}
-                        <span class="badge bg-secondary">{{ i.deadline|timeuntil }} left</span>
+                        {{ i.deadline|timeuntil }} left
                     {% endif %}
-                </p>
+                </span>
 
                 <div class="d-flex gap-2">
-                    <a href="{% url 'companies:view_applicants' i.id %}" class="btn btn-outline-primary btn-sm">
-                        View Applicants ({{ i.applications.count }})
-                    </a>
-                    {% if i.status == 'approved' and i.deadline >= today %}
-                        <a href="#" class="btn btn-outline-secondary btn-sm">Edit</a>
-                    {% endif %}
-                    <a href="{% url 'companies:delete_listing' i.id %}" class="btn btn-outline-danger btn-sm">Delete</a>
+                    <a href="{% url 'companies:view_applicants' i.id %}" class="btn btn-primary btn-apply">Applicants</a>
+                    <a href="{% url 'companies:delete_listing' i.id %}" class="btn btn-outline-danger btn-apply">Delete</a>
                 </div>
             </div>
         </div>
+        {% empty %}
+        <div class="internship-card" style="grid-column: 1 / -1; text-align: center; padding: 48px;">
+            <h5 class="text-muted mb-2">No listings posted yet.</h5>
+            <p class="text-muted small mb-3">Create your first internship listing to start receiving applicants.</p>
+            <a href="{% url 'companies:create_listing' %}" class="btn btn-primary">Post Internship</a>
+        </div>
         {% endfor %}
     </div>
-{% else %}
-    <div class="card p-5 text-center text-muted">
-        <p class="mb-3">No listings posted yet.</p>
-        <a href="{% url 'companies:create_listing' %}" class="btn btn-primary">Create one now</a>
-    </div>
-{% endif %}
+</div>
 {% endblock %}
